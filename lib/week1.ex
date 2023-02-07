@@ -169,6 +169,14 @@ defmodule P0W1 do
     |> Enum.filter(&P0W1.is_prime/1)
     |> Enum.filter(&(rem(nr, &1) == 0))
   end
+
+  def commonPrefix(list), do: commonPrefix(list, "")
+  def commonPrefix(list, prefix) do
+    newPrefix = list |> hd()|> String.split_at(String.length(prefix) + 1) |> elem(0)
+
+    (Enum.filter(list, &(String.starts_with?(&1, newPrefix))) |> length() == length(list))
+    |> if(do: commonPrefix(list, newPrefix), else: prefix)
+  end
 end
 
 # -100..100 |> Enum.filter(fn x -> P0W1.is_prime(x) end) |> IO.inspect()
