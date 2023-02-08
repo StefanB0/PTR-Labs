@@ -31,16 +31,6 @@ defmodule Project0_Week2 do
     |> Enum.join(" ")
   end
 
-  @doc """
-  ##Test
-
-      iex>Project0_Week2.smallestNumber(3, 1, 0)
-      103
-
-      iex>Project0_Week2.smallestNumber(4, 4, 2)
-      244
-
-  """
   def smallestNumber(x, y, z) do
     [x, y, z]
     |> Enum.sort()
@@ -151,13 +141,10 @@ defmodule Project0_Week2 do
     simplify = fn word -> String.graphemes(word) |> Enum.sort() |> Enum.join() end
     groups = list |> Enum.map(&simplify.(&1)) |> Enum.uniq() |> Map.new(&{&1, []})
 
-    list
-    |> Enum.reduce(groups, fn x, acc -> Map.put(acc, simplify.(x), acc[simplify.(x)] ++ [x]) end)
+    list |> Enum.reduce(groups, fn x, acc -> Map.put(acc, simplify.(x), acc[simplify.(x)] ++ [x]) end)
   end
 
   def toRoman(nr), do: toRoman(nr, "")
-
-  @spec toRoman(integer(), String.t()) :: String.t()
   def toRoman(0, roman_nr), do: roman_nr
 
   def toRoman(nr, roman_nr) do
@@ -185,9 +172,7 @@ defmodule Project0_Week2 do
     |> Enum.filter(&(rem(nr, &1) == 0))
     |> factorize(nr, [])
   end
-
   def factorize([], _nr, factor_set), do: factor_set
-
   def factorize(prime_set, nr, factor_set) do
     if rem(nr, hd(prime_set)) == 0 do
       factorize(prime_set, div(nr, hd(prime_set)), factor_set ++ [hd(prime_set)])
@@ -196,14 +181,11 @@ defmodule Project0_Week2 do
     end
   end
 
-  #
-
   def commonPrefix(list), do: commonPrefix(list, "")
-
   def commonPrefix(list, prefix) do
-    newPrefix = list |> hd() |> String.split_at(String.length(prefix) + 1) |> elem(0)
+    newPrefix = list |> hd()|> String.split_at(String.length(prefix) + 1) |> elem(0)
 
-    (Enum.filter(list, &String.starts_with?(&1, newPrefix)) |> length() == length(list))
+    (Enum.filter(list, &(String.starts_with?(&1, newPrefix))) |> length() == length(list))
     |> if(do: commonPrefix(list, newPrefix), else: prefix)
   end
 end
