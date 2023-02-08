@@ -1,4 +1,8 @@
-defmodule P0W1 do
+defmodule Project0_Week2 do
+  @moduledoc """
+  The Project0_Week2 module provides all the functions necessary for the first checkpoint of project 0 on PTR
+  """
+
   def is_prime(x) when x < 2, do: false
   def is_prime(x), do: 2..x |> Enum.filter(fn a -> rem(x, a) == 0 end) |> length() == 1
 
@@ -140,8 +144,6 @@ defmodule P0W1 do
     list |> Enum.reduce(groups, fn x, acc -> Map.put(acc, simplify.(x), acc[simplify.(x)] ++ [x]) end)
   end
 
-  # def commonPrefix(list), do: commonPrefix(list, "")
-
   def toRoman(nr), do: toRoman(nr, "")
   def toRoman(0, roman_nr), do: roman_nr
 
@@ -166,8 +168,17 @@ defmodule P0W1 do
 
   def factorize(nr) do
     1..nr
-    |> Enum.filter(&P0W1.is_prime/1)
+    |> Enum.filter(&Project0_Week2.is_prime/1)
     |> Enum.filter(&(rem(nr, &1) == 0))
+    |> factorize(nr, [])
+  end
+  def factorize([], _nr, factor_set), do: factor_set
+  def factorize(prime_set, nr, factor_set) do
+    if rem(nr, hd(prime_set)) == 0 do
+      factorize(prime_set, div(nr, hd(prime_set)), factor_set ++ [hd(prime_set)])
+    else
+      factorize(tl(prime_set), nr, factor_set)
+    end
   end
 
   def commonPrefix(list), do: commonPrefix(list, "")
@@ -178,20 +189,3 @@ defmodule P0W1 do
     |> if(do: commonPrefix(list, newPrefix), else: prefix)
   end
 end
-
-# -100..100 |> Enum.filter(fn x -> P0W1.is_prime(x) end) |> IO.inspect()
-# {4, 3} |> P0W1.cylinder_area() IO.inspect()
-# [1, 2, 3] |> P0W1.reverse_list() |> IO.inspect()
-# [1, 1, 1, 4, 2, 3] |> P0W1.unique_sum() |> IO.inspect()
-# P0W1.first_fibonacci_elements(10) |> IO.inspect()
-# P0W1.smallestNumber(4, 1, 0) |> IO.inspect()
-# P0W1.rotateLeft([1, 2, 3, 4, 5], 22) |> IO.inspect()
-# P0W1.listRightAngleTriangles() |> IO.inspect()
-# P0W1.removeConsecutiveDuplicates([1, 1, 1, 2, 2, 3, 2]) |> Enum.join(" ") |> IO.puts()
-# P0W1.lineWords(["Hello", "Alaska", "Dad", "Peace"]) |> Enum.join(", ") |> IO.puts()
-# P0W1.encode("et tu brutus", 17) |> IO.puts()
-# P0W1.decode("vk kl silklj", 17) |> IO.puts()
-# P0W1.groupAnagrams(["eat" , "tea" , "tan" , "ate" , "nat" , "bat"]) |> IO.inspect()
-# P0W1.letterCombinations("222") |> IO.inspect()
-# P0W1.toRoman(-3) |> IO.inspect()
-# P0W1.factorize(111) |> IO.inspect()
