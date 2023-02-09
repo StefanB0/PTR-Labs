@@ -54,12 +54,9 @@ defmodule Project0_Week2 do
     )
     |> Enum.join()
     |> String.to_integer()
-
-    # fn
   end
 
   def rotateLeft(list, n), do: Enum.reduce(1..n, list, fn _x, l -> tl(l) ++ [hd(l)] end)
-  # Enum.reduce(arr, fn x, acc -> acc + x end)
 
   def listRightAngleTriangles() do
     n = 20
@@ -195,8 +192,6 @@ defmodule Project0_Week2 do
       factorize(tl(prime_set), nr, factor_set)
     end
   end
-
-  #
 
   def commonPrefix(list), do: commonPrefix(list, "")
 
