@@ -5,7 +5,7 @@ defmodule Week3.MonitorActor do
 
   def spawn_and_reply(sender) do
     {pid, _reference} = spawn_monitor(Week3.MonitorActor, :listen, [])
-    send sender, {:new_pid, pid}
+    send(sender, {:new_pid, pid})
   end
 
   def crash, do: exit(:crash)
@@ -19,8 +19,10 @@ defmodule Week3.MonitorActor do
 
       {:crash} ->
         crash()
+
       {:hello} ->
         hello()
+
       {:spawn, sender} ->
         spawn_and_reply(sender)
     end

@@ -1,0 +1,5 @@
+Week3.AverageActor.start()
+Week3.AverageActor.add(1)
+Week3.AverageActor.add(6)
+Week3.AverageActor.add(2)
+Week3.AverageActor.add(3)

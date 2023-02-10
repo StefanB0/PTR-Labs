@@ -3,10 +3,8 @@ defmodule ThreadActor do
 
   def listen do
     receive do
-      {:echo, message} -> IO.puts(message)
-      {sender_pid} ->
-        IO.puts(:ok)
-        send(sender_pid, "message received")
+      {:echo, message} ->
+        IO.puts(message)
     end
 
     listen()
