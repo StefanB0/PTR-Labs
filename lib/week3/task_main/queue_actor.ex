@@ -14,10 +14,10 @@ defmodule QueueActor do
   def handle_call(:status, _from, state), do: {:reply, state, state}
 
   def handle_call({:push, value}, _from, state) when not is_list(value) do
-    {:reply, :ok,  state ++ [value]}
+    {:reply, :ok, state ++ [value]}
   end
 
-  def handle_call({:push, value}, _from,  state), do: {:reply, :ok, state ++ value}
+  def handle_call({:push, value}, _from, state), do: {:reply, :ok, state ++ value}
 
   ### Client API / Helper functions
 
