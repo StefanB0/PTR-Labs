@@ -21,12 +21,17 @@ defmodule ProcessSupervisor do
 
   def handle_info({:DOWN, reference, :process, _pid, :normal}, state) do
     Process.demonitor(reference, [:flush])
-    Map.delete(state, reference )
+    Map.delete(state, reference)
     IO.puts("Task successful")
     {:noreply, state}
   end
 
-  def handle_info(msg, state), do: (IO.inspect(msg); {:noreply, state})
+  def handle_info(msg, state),
+    do:
+      (
+        IO.inspect(msg)
+        {:noreply, state}
+      )
 
   ### Client API
   def start() do
@@ -38,7 +43,7 @@ defmodule ProcessSupervisor do
   end
 end
 
-defmodule Worker do
+defmodule Week3.ProcessSupervisor.Worker do
   def randomly_explode() do
     if Enum.random([true, true, true, true, false]) do
       exit(:self_detonation)

@@ -35,6 +35,7 @@ defmodule DoubleLinkedList do
   def inverse(), do: GenServer.call(__MODULE__, :inverse)
 
   ### Logic
+  # [a | b]
   defp link_nodes([first_agent | [second_agent | agent_list]]) do
     Agent.update(first_agent, fn {state, _succ, pred} -> {state, second_agent, pred} end)
     Agent.update(second_agent, fn {state, succ, _pred} -> {state, succ, first_agent} end)
