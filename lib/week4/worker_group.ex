@@ -24,14 +24,14 @@ defmodule Week4.WorkerGroup.WorkerNode do
 
   def init(args), do: {:ok, args}
 
-  def handle_call({:message, message}, _from, state) do
-    message |> IO.puts()
-    {:reply, :ok, state}
-  end
-
   def handle_cast(:kill, _state) do
     exit(:death_by_murder)
     # {:noreply, state}
+  end
+
+  def handle_call({:message, message}, _from, state) do
+    message |> IO.puts()
+    {:reply, :ok, state}
   end
 
   ### Client API
