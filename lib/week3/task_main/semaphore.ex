@@ -1,8 +1,8 @@
 defmodule Semaphore do
   def create_semaphore(n), do: spawn(Semaphore, :semaphore, [3])
 
-  def request(semaphore) do
-    send(semaphore, {:request, self()})
+  def aquire(semaphore) do
+    send(semaphore, {:aquire, self()})
 
     receive do
       :ok ->
@@ -21,7 +21,7 @@ defmodule Semaphore do
 
   def semaphore(n) do
     receive do
-      {:request, from} ->
+      {:aquire, from} ->
         send(from, :ok)
         semaphore(n - 1)
 
@@ -37,7 +37,7 @@ defmodule CriticalProcess do
   end
 
   def critical_section(semaphore) do
-    Semaphore.request(semaphore)
+    Semaphore.aquire(semaphore)
     IO.puts("aquired semaphore")
     :timer.sleep(5000)
     Semaphore.release(semaphore)
@@ -45,11 +45,3 @@ defmodule CriticalProcess do
     :ok
   end
 end
-
-s = Semaphore.create_semaphore(3)
-
-for _counter <- 1..9 do
-  CriticalProcess.run(s)
-end
-
-:timer.sleep(16000)
