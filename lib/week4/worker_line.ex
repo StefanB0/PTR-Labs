@@ -30,10 +30,12 @@ defmodule Week4.WorkerLine do
 
   ### Client API
   def start() do
-    child = [%{
-      id: __MODULE__,
-      start: {__MODULE__, :start_link, []}
-    }]
+    child = [
+      %{
+        id: __MODULE__,
+        start: {__MODULE__, :start_link, []}
+      }
+    ]
 
     Supervisor.start_link(child, strategy: :one_for_one)
   end
