@@ -1,24 +1,13 @@
 defmodule QuotesScraper do
   @moduledoc """
   Documentation for `QuotesScraper`.
-  """
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> QuotesScraper.hello()
-      :world
+  The module has 3 simple functions.
+  1. request_dump() - prints the status code, headers and body of the request to the console with no formatting.
+  2. parse_quotes() - parses the body of the request and returns a list of maps with the author, tags and text.
+  3. save_to_json() - saves the result to a json file.
 
   """
-  def hello do
-    :world
-  end
-
-  def request_quote do
-    HTTPoison.get!("https://quotes.toscrape.com/")
-  end
 
   def request_dump do
     IO.puts("Status code: #{request_quote().status_code}\n
@@ -41,17 +30,18 @@ defmodule QuotesScraper do
 
   def save_to_json do
     json_binary = Jason.encode_to_iodata!(parse_quotes()) |> Jason.Formatter.pretty_print()
-    File.write!("quotes.json", json_binary)
+    File.write!("tmp/quotes.json", json_binary)
   end
 
-  def string_substitute(string) do
-    String.replace(string, "“", "\"")
+
+  defp request_quote do
+    HTTPoison.get!("https://quotes.toscrape.com/")
   end
 
-  def remove_quotes(string) do
+  defp remove_quotes(string) do
     string
     |> String.replace("“", "")
     |> String.replace("”", "")
   end
-  
+
 end
