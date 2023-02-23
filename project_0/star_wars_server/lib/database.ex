@@ -31,32 +31,40 @@ defmodule StarWarsServer.Database do
 
   def handle_call({:update, id, movie}, _from, %{database: database}) do
     Map.put(movie, :id, id)
-    database = database
+
+    database =
+      database
       |> Enum.reject(fn movie -> movie.id == id end)
       |> Enum.concat([movie])
+
     {:reply, movie, %{database: database}}
   end
 
   def handle_call({:patch, id, movie}, _from, %{database: database}) do
     existing_movie = Enum.find(database, fn movie -> movie.id == id end)
     movie = Map.merge(existing_movie, movie)
-    database = database
+
+    database =
+      database
       |> Enum.reject(fn movie -> movie.id == id end)
       |> Enum.concat([movie])
+
     {:reply, movie, %{database: database}}
   end
 
   def handle_call({:delete, id}, _from, %{database: database}) do
     movie = Enum.find(database, fn movie -> movie.id == id end)
-    database = database
+
+    database =
+      database
       |> Enum.reject(fn movie -> movie.id == id end)
+
     {:reply, movie, %{database: database}}
   end
 
   ### Client API
 
-  @spec start_link() :: GenServer.on_start()
-  def start_link do
+  def start_link(_args) do
     GenServer.start_link(__MODULE__, %{database: []}, name: __MODULE__)
   end
 
@@ -104,6 +112,8 @@ defmodule StarWarsServer.Database do
     |> Enum.into(%{})
   end
 
-  defp trim_string({k, v}) when is_binary(v), do: {k |> String.trim() |> String.to_atom(), v |> String.trim()}
+  defp trim_string({k, v}) when is_binary(v),
+    do: {k |> String.trim() |> String.to_atom(), v |> String.trim()}
+
   defp trim_string({k, v}), do: {k |> String.trim() |> String.to_atom(), v}
 end

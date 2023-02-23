@@ -1,15 +1,19 @@
 defmodule StarWarsServer.Router do
+  alias StarWarsServer.Database
   use Plug.Router
 
   plug(:match)
   plug(:dispatch)
 
   get "/movies" do
-    send_resp(conn, 200, "get movies")
+    json = Database.get_all() |> Jason.encode!() |> Jason.Formatter.pretty_print()
+    send_resp(conn, 200, json)
   end
 
   get "/movies/:id" do
-    send_resp(conn, 200, "get movie id")
+    id = String.to_integer(id)
+    json = Database.get(id) |> Jason.encode!() |> Jason.Formatter.pretty_print()
+    send_resp(conn, 200, json)
   end
 
   post "/movies" do

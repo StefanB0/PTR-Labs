@@ -9,6 +9,7 @@ defmodule StarWarsServer.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      StarWarsServer.Database,
       Plug.Cowboy.child_spec(scheme: :http, plug: StarWarsServer.Router, options: [port: 4000])
     ]
 
@@ -16,6 +17,8 @@ defmodule StarWarsServer.Application do
 
     Logger.info("Starting Star Wars Server")
 
-    Supervisor.start_link(children, opts)
+    res = Supervisor.start_link(children, opts)
+    StarWarsServer.Database.import("store/data.json")
+    res
   end
 end

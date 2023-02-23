@@ -4,7 +4,7 @@ defmodule StarWarsServerTest do
   alias StarWarsServer.Database
 
   setup do
-    {:ok, _} = Database.start_link
+    {:ok, _} = Database.start_link()
     :ok
   end
 
@@ -13,12 +13,12 @@ defmodule StarWarsServerTest do
     Database.import("store/data.json")
     assert Database.get_all() != []
     assert Database.get_all() |> Enum.count() == 11
-    assert Database.get(1) == %{
-        id: 1,
-        title: "Star Wars : Episode IV - A New Hope",
-        release_year: 1977,
-        director: "George Lucas"
-    }
-  end
 
+    assert Database.get(1) == %{
+             id: 1,
+             title: "Star Wars : Episode IV - A New Hope",
+             release_year: 1977,
+             director: "George Lucas"
+           }
+  end
 end
