@@ -3,6 +3,13 @@ defmodule StarWarsServer.Router do
   use Plug.Router
 
   plug(:match)
+
+  plug(Plug.Parsers,
+    parsers: [:json],
+    pass: ["application/json"],
+    json_decoder: Jason
+  )
+
   plug(:dispatch)
 
   get "/movies" do
@@ -17,19 +24,32 @@ defmodule StarWarsServer.Router do
   end
 
   post "/movies" do
-    send_resp(conn, 200, "post movie")
+    movie = Database.create(conn.body_params) |> Jason.encode!() |> Jason.Formatter.pretty_print()
+    send_resp(conn, 200, movie)
   end
 
   put "/movies/:id" do
-    send_resp(conn, 200, "put movie id")
+    id = String.to_integer(id)
+
+    movie =
+      Database.update(id, conn.body_params) |> Jason.encode!() |> Jason.Formatter.pretty_print()
+
+    send_resp(conn, 200, movie)
   end
 
   patch "/movies/:id" do
-    send_resp(conn, 200, "patch movie id")
+    id = String.to_integer(id)
+
+    movie =
+      Database.patch(id, conn.body_params) |> Jason.encode!() |> Jason.Formatter.pretty_print()
+
+    send_resp(conn, 200, movie)
   end
 
   delete "/movies/:id" do
-    send_resp(conn, 200, "delete movie id")
+    id = String.to_integer(id)
+    movie = Database.delete(id) |> Jason.encode!() |> Jason.Formatter.pretty_print()
+    send_resp(conn, 200, movie)
   end
 
   match _ do

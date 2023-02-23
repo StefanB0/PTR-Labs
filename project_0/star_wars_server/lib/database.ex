@@ -17,8 +17,7 @@ defmodule StarWarsServer.Database do
   end
 
   def handle_call({:create, movie}, _from, %{database: []}) do
-    movie = Map.put(movie, :id, 1)
-    database = [movie]
+    database = [movie] = [Map.put(movie, :id, 1)]
     {:reply, movie, %{database: database}}
   end
 
@@ -30,7 +29,7 @@ defmodule StarWarsServer.Database do
   end
 
   def handle_call({:update, id, movie}, _from, %{database: database}) do
-    Map.put(movie, :id, id)
+    movie = Map.put(movie, :id, id)
 
     database =
       database
@@ -64,8 +63,8 @@ defmodule StarWarsServer.Database do
 
   ### Client API
 
-  def start_link(_args) do
-    GenServer.start_link(__MODULE__, %{database: []}, name: __MODULE__)
+  def start_link(args \\ []) do
+    GenServer.start_link(__MODULE__, %{database: args}, name: __MODULE__)
   end
 
   @spec get_all() :: [map()]
