@@ -1,6 +1,6 @@
-defmodule Project0 do
+defmodule StarWarsServer do
   @moduledoc """
-  Documentation for `Project0`.
+  Documentation for `StarWarsServer`.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule Project0 do
 
   ## Examples
 
-      iex> Project0.hello()
+      iex> StarWarsServer.hello()
       :world
 
   """

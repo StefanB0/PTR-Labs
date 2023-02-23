@@ -20,7 +20,7 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-project_0-*.tar
+star_wars_server-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
