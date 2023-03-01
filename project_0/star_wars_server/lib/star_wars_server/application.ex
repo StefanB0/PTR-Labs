@@ -1,15 +1,15 @@
 defmodule StarWarsServer.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
   @moduledoc false
 
   use Application
   require Logger
 
+  alias StarWarsServer.EtsDatabse, as: Database
+
   @impl true
   def start(_type, _args) do
     children = [
-      StarWarsServer.Database,
+      Database,
       Plug.Cowboy.child_spec(scheme: :http, plug: StarWarsServer.Router, options: [port: 4000])
     ]
 
@@ -18,7 +18,7 @@ defmodule StarWarsServer.Application do
     Logger.info("Starting Star Wars Server")
 
     res = Supervisor.start_link(children, opts)
-    StarWarsServer.Database.import("store/data.json")
+    Database.import("store/data.json")
     res
   end
 end

@@ -1,5 +1,5 @@
 defmodule StarWarsServer.Router do
-  alias StarWarsServer.Database
+  alias StarWarsServer.EtsDatabse, as: Database
   use Plug.Router
 
   plug(:match)

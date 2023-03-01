@@ -1,6 +1,5 @@
 defmodule StarWarsServerTest do
   use ExUnit.Case
-
   alias StarWarsServer.Database
 
   setup do
@@ -23,21 +22,25 @@ defmodule StarWarsServerTest do
   end
 
   test "create movie" do
-    movie = Database.create(%{
-      title: "Star Wars : Episode IV - A New Hope",
-      release_year: 1977,
-      director: "George Lucas"
-    })
+    movie =
+      Database.create(%{
+        title: "Star Wars : Episode IV - A New Hope",
+        release_year: 1977,
+        director: "George Lucas"
+      })
 
-    assert Database.get_all() |> Enum.find(fn movie -> movie.title == "Star Wars : Episode IV - A New Hope" end) == movie
+    assert Database.get_all()
+           |> Enum.find(fn movie -> movie.title == "Star Wars : Episode IV - A New Hope" end) ==
+             movie
   end
 
   test "update movie" do
-    id = Database.create(%{
-      title: "Star Wars : Episode IV - A New Hope",
-      release_year: 1977,
-      director: "George Lucas"
-    }).id
+    id =
+      Database.create(%{
+        title: "Star Wars : Episode IV - A New Hope",
+        release_year: 1977,
+        director: "George Lucas"
+      }).id
 
     new_movie = %{
       title: "Star Wars : Episode IV - A New Hope",
@@ -50,13 +53,14 @@ defmodule StarWarsServerTest do
     new_movie = Map.put(new_movie, :id, id)
     assert Database.get(id) == new_movie
   end
-  
+
   test "patch movie" do
-    id = Database.create(%{
-      title: "Star Wars : Episode IV - A New Hope",
-      release_year: 1977,
-      director: "George Lucas"
-    }).id
+    id =
+      Database.create(%{
+        title: "Star Wars : Episode IV - A New Hope",
+        release_year: 1977,
+        director: "George Lucas"
+      }).id
 
     new_movie = %{
       release_year: 2002
@@ -73,11 +77,12 @@ defmodule StarWarsServerTest do
   end
 
   test "delete movie" do
-    id = Database.create(%{
-      title: "Star Wars : Episode IV - A New Hope",
-      release_year: 1977,
-      director: "George Lucas"
-    }).id
+    id =
+      Database.create(%{
+        title: "Star Wars : Episode IV - A New Hope",
+        release_year: 1977,
+        director: "George Lucas"
+      }).id
 
     Database.delete(id)
 
