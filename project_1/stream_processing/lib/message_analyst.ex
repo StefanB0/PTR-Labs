@@ -40,8 +40,9 @@ defmodule MessageAnalyst do
     |> Enum.max_by(fn {_k, v} ->
       v
     end)
-    |> (&"Most popular tag is: #{elem(&1, 0)}: #{elem(&1, 1)}").()
-    |> Logger.notice()
+    |> (&"Most popular hashtag is: ##{elem(&1, 0)}: #{elem(&1, 1)}").()
+    |> (&IO.ANSI.format([:green, &1])).()
+    |> IO.puts()
 
     {:noreply, state}
   end

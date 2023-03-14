@@ -6,7 +6,9 @@ defmodule PrinterPoolManager do
 
   def init(args) do
     printer_pool = Keyword.fetch!(args, :printer_pool)
-    state = %{pool: printer_pool, pointer: 0}
+    # state = %{pool: printer_pool, pointer: 0}
+    state = %{pool: Enum.map(printer_pool, fn p -> {p, 0} end) |> Map.new()}
+
     Logger.info("PrinterPoolManager started")
     {:ok, state}
   end
@@ -14,14 +16,21 @@ defmodule PrinterPoolManager do
   ## Server callbacks
 
   def handle_cast({:print, message}, state) do
-    p = Map.get(state, :pointer)
+    {printer_address, printer_score} =
+      state
+      |> Map.get(:pool)
+      |> Enum.min_by(fn {_p, c} ->
+        c
+      end)
 
-    state
-    |> Map.get(:pool)
-    |> Enum.at(p)
-    |> GenServer.cast({:print, message})
+    Printer.least_loaded_print(printer_address, message)
+    state = %{state | pool: %{state.pool | printer_address => printer_score + 1}}
+    {:noreply, state}
+  end
 
-    state = %{state | pointer: rem(p + 1, Enum.count(state.pool))}
+  def handle_cast({:print, :done, printer_id}, state) do
+    score = Map.get(state.pool, printer_id)
+    state = %{state | pool: %{state.pool | printer_id => score - 1}}
     {:noreply, state}
   end
 
@@ -29,5 +38,9 @@ defmodule PrinterPoolManager do
 
   def start_link(args \\ [printer_pool: Printer]) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
+  end
+
+  def print_done(printer_id) do
+    GenServer.cast(__MODULE__, {:print, :done, printer_id})
   end
 end
