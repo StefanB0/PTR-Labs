@@ -8,7 +8,6 @@ defmodule ReaderSupervisor do
 
   @impl true
   def init(_args) do
-    Logger.info("ReaderSupervisor started")
     url1 = Application.fetch_env!(:stream_processing, :eventsource_tweet_url_1)
     url2 = Application.fetch_env!(:stream_processing, :eventsource_tweet_url_2)
 
@@ -18,5 +17,6 @@ defmodule ReaderSupervisor do
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
+    Logger.info("ReaderSupervisor started")
   end
 end
