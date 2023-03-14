@@ -24,10 +24,11 @@ defmodule SSEReader do
   def handle_info(message, state) do
     case message do
       %{id: _, event: _, data: "{\"message\": panic}"} ->
-        IO.puts("PANIC")
+        IO.puts("\n\n---\nPANIC\n---\n\n")
+        GenServer.cast(MessageProcessor, :panic_message)
       message ->
-        dest = Keyword.fetch!(state, :destination)
-        GenServer.call(dest, {:message, message})
+        # dest = Keyword.fetch!(state, :destination)
+        GenServer.cast(MessageProcessor, {:message, message})
     end
 
     {:noreply, state}

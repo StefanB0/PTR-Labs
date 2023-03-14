@@ -11,12 +11,17 @@ defmodule MessageProcessor do
 
   ## Server callbacks
 
-  def handle_call({:message, message}, _from, state) do
+  def handle_cast({:message, message}, state) do
     message = Map.put(message, :data, Jason.decode!(message.data, keys: :atoms))
 
-    GenServer.call(state.analyst, {:message, message})
-    GenServer.call(state.printer, {:print, message})
-    {:reply, :ok, state}
+    GenServer.cast(MessageAnalyst, {:message, message})
+    GenServer.cast(PrinterPoolManager, {:print, message})
+    {:noreply, state}
+  end
+
+  def handle_cast(:panic_message, state) do
+    GenServer.cast(PrinterPoolManager, :{:print, :panic_message})
+    {:noreply, state}
   end
 
   # Client API

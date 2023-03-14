@@ -4,25 +4,33 @@ defmodule Printer do
 
   # Server API
 
-  def init(args) do
+  def init(_args) do
     delay_time = Application.fetch_env!(:stream_processing, :print_delay)
-    args = [print_delay: delay_time | args]
+    state = %{print_delay: delay_time}
     Logger.info("Printer worker started")
-    {:ok, args}
+    {:ok, state}
   end
 
   ## Server callbacks
 
-  def handle_call({:print, message}, _from, state) do
-    state |> Keyword.fetch!(:print_delay) |> delay()
+  def handle_cast({:print, :panic_message}, _from, state) do
+    delay(state.print_delay)
+    Logger.alert("Printer panics and crashes")
+    exit(:panic)
+    {:reply, :ok, state}
+  end
+
+  def handle_cast({:print, message}, _from, state) do
+    delay(state.print_delay)
     print_text(message)
     {:reply, :ok, state}
   end
 
   # Client API
 
-  def start_link(args \\ []) do
-    GenServer.start_link(__MODULE__, args, name: __MODULE__)
+  def start_link(args \\ [id: :printer0]) do
+    name = Keyword.fetch!(args, :id)
+    GenServer.start_link(__MODULE__, args, name: name)
   end
 
   # Logic

@@ -9,9 +9,9 @@ defmodule StreamProcessing.Application do
     Logger.info("Application started")
 
     children = [
-      Printer,
+      PrinterSupervisor,
       MessageAnalyst,
-      {MessageProcessor, %{analyst: MessageAnalyst, printer: Printer}},
+      MessageProcessor,
       ReaderSupervisor
     ]
 

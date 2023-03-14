@@ -4,7 +4,7 @@ defmodule MessageAnalyst do
 
   # Server API
 
-  def init(args) do
+  def init(_args) do
     state = %{tags: %{}}
     spawn_link(run_timer())
     Logger.info("MessageAnalyst worker started")
@@ -13,7 +13,7 @@ defmodule MessageAnalyst do
 
   ## Server callbacks
 
-  def handle_call({:message, message}, _from, state) do
+  def handle_cast({:message, message}, state) do
     state.tags = message
     |> Map.get(:data)
     |> Map.get(:message)
@@ -28,7 +28,7 @@ defmodule MessageAnalyst do
       value1 + value2
     end)
 
-    {:reply, :ok, state}
+    {:noreply, state}
   end
 
   def handle_cast(:print, state) do

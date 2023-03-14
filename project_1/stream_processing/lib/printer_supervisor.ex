@@ -11,6 +11,8 @@ defmodule PrinterSupervisor do
     children = [
       {Printer, [id: :printer1]},
       {Printer, [id: :printer2]},
+      {Printer, [id: :printer3]},
+      {PrinterPoolManager, [printer_pool: [:printer1, :printer2, :printer3]]}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

@@ -5,20 +5,29 @@ defmodule PrinterPoolManager do
   # Server API
 
   def init(args) do
+    printer_pool = Keyword.fetch!(args, :printer_pool)
+    state = %{pool: printer_pool, pointer: 0}
     Logger.info("PrinterPoolManager started")
-    {:ok, args}
+    {:ok, state}
   end
 
   ## Server callbacks
 
-  def handle_call({:message, message}, _from, state) do
-    
-    {:reply, :ok, state}
+  def handle_cast({:message, message}, state) do
+    p = Map.get(state, :pointer)
+
+    state
+    |> Map.get(:pool)
+    |> Enum.at(p)
+    |> GenServer.cast({:print, message})
+
+    state = %{state | pointer: (p + 1) % Enum.count(state.pool)}
+    {:noreply, state}
   end
 
   # Client API
 
-  def start_link(args \\ []) do
+  def start_link(args \\ [printer_pool: Printer]) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 end
