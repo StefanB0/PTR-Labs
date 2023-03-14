@@ -6,7 +6,7 @@ defmodule MessageAnalyst do
 
   def init(_args) do
     state = %{tags: %{}}
-    spawn_link(run_timer())
+    spawn_link(&run_timer/0)
     Logger.info("MessageAnalyst worker started")
     {:ok, state}
   end
@@ -14,32 +14,34 @@ defmodule MessageAnalyst do
   ## Server callbacks
 
   def handle_cast({:message, message}, state) do
-    state.tags = message
-    |> Map.get(:data)
-    |> Map.get(:message)
-    |> Map.get(:tweet)
-    |> Map.get(:entities)
-    |> Map.get(:hashtags)
-    |> Enum.map(fn item ->
-      "#" + Map.get(item, :text)
-    end)
-    |> Enum.frequencies()
-    |> Map.merge(state.tags, fn key, value1, value2 ->
-      value1 + value2
-    end)
+    state = %{
+      state
+      | tags:
+          message
+          |> Map.get(:data)
+          |> Map.get(:message)
+          |> Map.get(:tweet)
+          |> Map.get(:entities)
+          |> Map.get(:hashtags)
+          |> Enum.map(fn item ->
+            Map.get(item, :text)
+          end)
+          |> Enum.frequencies()
+          |> Map.merge(state.tags, fn _key, value1, value2 ->
+            value1 + value2
+          end)
+    }
 
     {:noreply, state}
   end
 
   def handle_cast(:print, state) do
     state.tags
-    |> Enum.max_by(fn {k, v} ->
+    |> Enum.max_by(fn {_k, v} ->
       v
     end)
-    |> Enum.fetch!(0)
-    |> Integer.to_string()
-    |> &("\n\n---\nMost popular tag is: #{&1}\n---\n\n").()
-    |> IO.puts()
+    |> (&"Most popular tag is: #{elem(&1, 0)}: #{elem(&1, 1)}").()
+    |> Logger.notice()
 
     {:noreply, state}
   end

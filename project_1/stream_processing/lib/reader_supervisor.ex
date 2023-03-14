@@ -12,11 +12,11 @@ defmodule ReaderSupervisor do
     url2 = Application.fetch_env!(:stream_processing, :eventsource_tweet_url_2)
 
     children = [
-      {SSEReader, [id: :sse_reader1, url: url1, destination: MessageProcessor]},
-      {SSEReader, [id: :sse_reader2, url: url2, destination: MessageProcessor]},
+      {SSEReader, [id: :sse_reader1, url: url1]},
+      {SSEReader, [id: :sse_reader2, url: url2]}
     ]
 
-    Supervisor.init(children, strategy: :one_for_one)
     Logger.info("ReaderSupervisor started")
+    Supervisor.init(children, strategy: :one_for_one)
   end
 end

@@ -19,7 +19,7 @@ defmodule StreamProcessing.MixProject do
       env: [
         eventsource_tweet_url_1: "localhost:4000/tweets/1",
         eventsource_tweet_url_2: "localhost:4000/tweets/2",
-        print_delay: 50,
+        print_delay: 200
       ]
     ]
   end
@@ -28,7 +28,7 @@ defmodule StreamProcessing.MixProject do
   defp deps do
     [
       {:eventsource_ex, "~> 1.1.0"},
-      {:jason, "~> 1.3"},
+      {:jason, "~> 1.3"}
     ]
   end
 end

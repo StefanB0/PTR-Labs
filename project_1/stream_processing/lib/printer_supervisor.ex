@@ -15,7 +15,7 @@ defmodule PrinterSupervisor do
       {PrinterPoolManager, [printer_pool: [:printer1, :printer2, :printer3]]}
     ]
 
-    Supervisor.init(children, strategy: :one_for_one)
     Logger.info("PrinterSupervisor started")
+    Supervisor.init(children, strategy: :one_for_one)
   end
 end

@@ -4,31 +4,41 @@ defmodule Printer do
 
   # Server API
 
-  def init(_args) do
+  def init(args) do
     delay_time = Application.fetch_env!(:stream_processing, :print_delay)
     state = %{print_delay: delay_time}
-    Logger.info("Printer worker started")
+    name = Keyword.fetch!(args, :id)
+    Logger.info("Printer worker #{name} started")
     {:ok, state}
+  end
+
+  def child_spec(args) do
+    id = Keyword.fetch!(args, :id)
+
+    %{
+      id: id,
+      start: {__MODULE__, :start_link, [args]}
+    }
   end
 
   ## Server callbacks
 
-  def handle_cast({:print, :panic_message}, _from, state) do
+  def handle_cast({:print, :panic_message}, state) do
     delay(state.print_delay)
-    Logger.alert("Printer panics and crashes")
+    Logger.warning("Printer #{state.id} panics and crashes")
     exit(:panic)
-    {:reply, :ok, state}
+    {:noreply, state}
   end
 
-  def handle_cast({:print, message}, _from, state) do
+  def handle_cast({:print, message}, state) do
     delay(state.print_delay)
     print_text(message)
-    {:reply, :ok, state}
+    {:noreply, state}
   end
 
   # Client API
 
-  def start_link(args \\ [id: :printer0]) do
+  def start_link(args) do
     name = Keyword.fetch!(args, :id)
     GenServer.start_link(__MODULE__, args, name: name)
   end
@@ -54,7 +64,8 @@ defmodule Printer do
     |> Map.get(:message)
     |> Jason.encode!()
     |> Jason.Formatter.pretty_print()
-    |> then(&File.write("sample.json",&1, [:append]))
-    File.write("sample.json","\n", [:append])
+    |> then(&File.write("sample.json", &1, [:append]))
+
+    File.write("sample.json", "\n", [:append])
   end
 end

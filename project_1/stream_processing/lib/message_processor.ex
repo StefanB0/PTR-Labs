@@ -20,7 +20,7 @@ defmodule MessageProcessor do
   end
 
   def handle_cast(:panic_message, state) do
-    GenServer.cast(PrinterPoolManager, :{:print, :panic_message})
+    GenServer.cast(PrinterPoolManager, {:print, :panic_message})
     {:noreply, state}
   end
 

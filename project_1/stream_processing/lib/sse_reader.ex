@@ -5,7 +5,6 @@ defmodule SSEReader do
   # Server API
 
   def init(args) do
-    id = Keyword.fetch!(args, :id)
     url = Keyword.fetch!(args, :url)
     EventsourceEx.new(url, stream_to: self())
     {:ok, args}
@@ -13,6 +12,7 @@ defmodule SSEReader do
 
   def child_spec(args) do
     id = Keyword.fetch!(args, :id)
+
     %{
       id: id,
       start: {__MODULE__, :start_link, [args]}
@@ -24,10 +24,9 @@ defmodule SSEReader do
   def handle_info(message, state) do
     case message do
       %{id: _, event: _, data: "{\"message\": panic}"} ->
-        IO.puts("\n\n---\nPANIC\n---\n\n")
         GenServer.cast(MessageProcessor, :panic_message)
+
       message ->
-        # dest = Keyword.fetch!(state, :destination)
         GenServer.cast(MessageProcessor, {:message, message})
     end
 
@@ -36,7 +35,8 @@ defmodule SSEReader do
 
   # Client API
 
-  def start_link(args \\ []) do
-    GenServer.start_link(__MODULE__, args, name: __MODULE__)
+  def start_link(args \\ [id: :sse_reader0, url: "localhost:4000/tweets/1"]) do
+    name = Keyword.fetch!(args, :id)
+    GenServer.start_link(__MODULE__, args, name: name)
   end
 end

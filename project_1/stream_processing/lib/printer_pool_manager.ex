@@ -13,7 +13,7 @@ defmodule PrinterPoolManager do
 
   ## Server callbacks
 
-  def handle_cast({:message, message}, state) do
+  def handle_cast({:print, message}, state) do
     p = Map.get(state, :pointer)
 
     state
@@ -21,7 +21,7 @@ defmodule PrinterPoolManager do
     |> Enum.at(p)
     |> GenServer.cast({:print, message})
 
-    state = %{state | pointer: (p + 1) % Enum.count(state.pool)}
+    state = %{state | pointer: rem(p + 1, Enum.count(state.pool))}
     {:noreply, state}
   end
 
