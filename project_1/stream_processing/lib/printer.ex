@@ -5,7 +5,6 @@ defmodule Printer do
   # Server API
 
   def init(args) do
-    # delay_time = Application.fetch_env!(:stream_processing, :print_delay)
     name = Keyword.fetch!(args, :id)
     delay_time = Keyword.fetch!(args, :delay)
     state = %{print_delay: delay_time, id: name}
@@ -27,8 +26,7 @@ defmodule Printer do
   def handle_cast({:print, :panic_message}, state) do
     IO.ANSI.format([:red, "Printer #{state.id} panics and crashes"])
     |> IO.puts()
-    exit(:panic)
-    {:noreply, state}
+    {:stop, :panic, state}
   end
 
   def handle_cast({:print, message}, state) do
