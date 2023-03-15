@@ -24,14 +24,14 @@ defmodule Printer do
   ## Server callbacks
 
   def handle_cast({:print, :panic_message}, state) do
-    IO.ANSI.format([:red, "Printer #{state.id} panics and crashes"])
-    |> IO.puts()
+    IO.ANSI.format([:red, "Printer #{state.id} panics and crashes"]) |> IO.puts()
     {:stop, :panic, state}
   end
 
   def handle_cast({:print, message}, state) do
     delay(state.print_delay)
     print_text(message)
+
     PrinterPoolManager.print_done(state.id)
     {:noreply, state}
   end
@@ -53,20 +53,39 @@ defmodule Printer do
 
   # Logic
 
-  def delay(time) do
+  defp delay(time) do
     Process.sleep(time)
   end
 
-  def print_text(message) do
+  defp print_text(message) do
     message
     |> Map.get(:data)
     |> Map.get(:message)
     |> Map.get(:tweet)
     |> Map.get(:text)
+    |> censor()
     |> IO.puts()
   end
 
-  def append_message_to_file(message) do
+  def censor(text) do
+    text
+    |> String.split()
+    |> Enum.map(fn word ->
+      if censor_word?(word) do
+        String.graphemes(word) |> Enum.map(fn _ -> "*" end) |> Enum.join()
+      else
+        word
+      end
+    end)
+    |> Enum.join(" ")
+  end
+
+  defp censor_word?(word) do
+    CensorList.get_word_list()
+    |> Enum.member?(word)
+  end
+
+  defp append_message_to_file(message) do
     message
     |> Map.get(:data)
     |> Map.get(:message)

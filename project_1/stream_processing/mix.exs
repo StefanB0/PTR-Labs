@@ -19,7 +19,8 @@ defmodule StreamProcessing.MixProject do
       env: [
         eventsource_tweet_url_1: "localhost:4000/tweets/1",
         eventsource_tweet_url_2: "localhost:4000/tweets/2",
-        print_delay: 50
+        print_delay: 50,
+        swear_words_file: "config/swear-words.json",
       ]
     ]
   end
