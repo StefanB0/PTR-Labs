@@ -21,4 +21,10 @@ defmodule PrinterSupervisor do
     Logger.info("PrinterSupervisor started")
     Supervisor.init(children, strategy: :one_for_one)
   end
+
+  # Client API
+
+  def add_printer(printer_id, delay_time) do
+    Supervisor.start_child(__MODULE__, {Printer, [id: printer_id, delay: delay_time]})
+  end
 end

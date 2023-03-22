@@ -1,0 +1,3 @@
+defmodule PrinterScaleManager do
+  
+end

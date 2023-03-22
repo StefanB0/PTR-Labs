@@ -28,11 +28,11 @@ defmodule Printer do
     {:stop, :panic, state}
   end
 
-  def handle_cast({:print, message}, state) do
+  def handle_cast({:print, message, iterator}, state) do
     delay(state.print_delay)
     print_text(message)
 
-    PrinterPoolManager.print_done(state.id)
+    PrinterPoolManager.print_done(state.id, iterator)
     {:noreply, state}
   end
 
@@ -42,8 +42,8 @@ defmodule Printer do
     GenServer.cast(printer_address, {:print, message})
   end
 
-  def least_loaded_print(printer_address, message) do
-    GenServer.cast(printer_address, {:print, message})
+  def least_loaded_print(printer_address, message, iterator) do
+    GenServer.cast(printer_address, {:print, message, iterator})
   end
 
   def start_link(args) do
