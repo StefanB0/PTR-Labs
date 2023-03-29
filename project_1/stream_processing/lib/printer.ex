@@ -17,7 +17,12 @@ defmodule Printer do
 
     %{
       id: id,
-      start: {__MODULE__, :start_link, [args]}
+      start: {__MODULE__, :start_link, [args]},
+      restart: :transient,
+      shutdown: 5000,
+      type: :worker,
+      
+
     }
   end
 
@@ -26,6 +31,8 @@ defmodule Printer do
   def handle_cast({:print, :panic_message}, state) do
     IO.ANSI.format([:red, "Printer #{state.id} panics and crashes"]) |> IO.puts()
     {:stop, :panic, state}
+    # exit(:panic)
+    # {:noreply, state}
   end
 
   def handle_cast({:print, message, iterator}, state) do
@@ -37,6 +44,10 @@ defmodule Printer do
   end
 
   # Client API
+
+  def panic(printer_address) do
+    GenServer.cast(printer_address, {:print, :panic_message})
+  end
 
   def robin_print(printer_address, message) do
     GenServer.cast(printer_address, {:print, message})
@@ -53,9 +64,7 @@ defmodule Printer do
 
   # Logic
 
-  defp delay(time) do
-    Process.sleep(time)
-  end
+  defp delay(time), do: Process.sleep(time)
 
   defp print_text(message) do
     message
@@ -71,28 +80,22 @@ defmodule Printer do
     text
     |> String.split()
     |> Enum.map(fn word ->
-      if censor_word?(word) do
-        String.graphemes(word) |> Enum.map(fn _ -> "*" end) |> Enum.join()
-      else
-        word
-      end
-    end)
+        censor_word?(word) && (String.graphemes(word) |> Enum.map(fn _ -> "*" end) |> Enum.join())
+        || word
+      end)
     |> Enum.join(" ")
   end
 
-  defp censor_word?(word) do
-    CensorList.get_word_list()
-    |> Enum.member?(word)
-  end
+  defp censor_word?(word), do: CensorList.get_word_list()|> Enum.member?(word)
 
-  defp append_message_to_file(message) do
-    message
-    |> Map.get(:data)
-    |> Map.get(:message)
-    |> Jason.encode!()
-    |> Jason.Formatter.pretty_print()
-    |> then(&File.write("sample.json", &1, [:append]))
+  # defp append_message_to_file(message) do
+  #   message
+  #   |> Map.get(:data)
+  #   |> Map.get(:message)
+  #   |> Jason.encode!()
+  #   |> Jason.Formatter.pretty_print()
+  #   |> then(&File.write("sample.json", &1, [:append]))
 
-    File.write("sample.json", "\n", [:append])
-  end
+  #   File.write("sample.json", "\n", [:append])
+  # end
 end
