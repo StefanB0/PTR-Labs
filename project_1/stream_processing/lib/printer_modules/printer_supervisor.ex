@@ -14,7 +14,7 @@ defmodule PrinterSupervisor do
       # {Printer, [id: :printer2, delay: delay_time]},
       # {Printer, [id: :printer3, delay: delay_time]},
       # {Printer, [id: :printer4, delay: delay_time]},
-      {PrinterDynamicSupervisor, []},
+      {PrinterPoolSupervisor, []},
       {PrinterPoolManager, [printer_pool: []]}, #[:printer1, :printer2, :printer3, :printer4]]}
       {PrintertScalingManager, []},
     ]

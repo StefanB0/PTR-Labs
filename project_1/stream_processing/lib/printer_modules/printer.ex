@@ -19,10 +19,6 @@ defmodule Printer do
       id: id,
       start: {__MODULE__, :start_link, [args]},
       restart: :transient,
-      shutdown: 5000,
-      type: :worker,
-      
-
     }
   end
 
@@ -31,8 +27,6 @@ defmodule Printer do
   def handle_cast({:print, :panic_message}, state) do
     IO.ANSI.format([:red, "Printer #{state.id} panics and crashes"]) |> IO.puts()
     {:stop, :panic, state}
-    # exit(:panic)
-    # {:noreply, state}
   end
 
   def handle_cast({:print, message, iterator}, state) do
@@ -73,7 +67,7 @@ defmodule Printer do
     |> Map.get(:tweet)
     |> Map.get(:text)
     |> censor()
-    |> IO.puts()
+    # |> IO.puts()
   end
 
   def censor(text) do
