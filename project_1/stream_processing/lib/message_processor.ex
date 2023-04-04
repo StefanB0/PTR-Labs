@@ -3,19 +3,18 @@ defmodule MessageProcessor do
   require Logger
 
   # Server API
-
-  def init(args) do
+  def init(args \\ [printer_pool_manager: PrinterPoolManager]) do
+    message_analyst = MessageAnalyst
+    printer_pool_manager = Keyword.fetch!(args, :printer_pool_manager)
+    state = %{message_analyst: message_analyst, printer_pool_manager: printer_pool_manager}
     Logger.info("MessageProcessor worker started")
-    {:ok, args}
+    {:ok, state}
   end
 
   ## Server callbacks
-
   def handle_cast({:message, message}, state) do
-    message = Map.put(message, :data, Jason.decode!(message.data, keys: :atoms))
-
-    GenServer.cast(MessageAnalyst, {:message, message})
-    GenServer.cast(PrinterPoolManager, {:print, message})
+    GenServer.cast(state.message_analyst, {:message, message})
+    GenServer.cast(state.printer_pool_manager, {:print, message})
     {:noreply, state}
   end
 
@@ -29,4 +28,7 @@ defmodule MessageProcessor do
   def start_link(args \\ []) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
+
+  # Logic
+
 end

@@ -21,6 +21,7 @@ defmodule StreamProcessing.MixProject do
         eventsource_tweet_url_2:  "localhost:4000/tweets/2",
         swear_words_file:         "config/swear-words.json",
         print_delay:              500,
+        debug:                    true,
         # starter_printer_nr:       3,
         # min_printer_nr:           3,
         # max_printer_nr:           10,

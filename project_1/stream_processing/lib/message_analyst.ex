@@ -17,15 +17,8 @@ defmodule MessageAnalyst do
     state = %{
       state
       | tags:
-          message
-          |> Map.get(:data)
-          |> Map.get(:message)
-          |> Map.get(:tweet)
-          |> Map.get(:entities)
-          |> Map.get(:hashtags)
-          |> Enum.map(fn item ->
-            Map.get(item, :text)
-          end)
+          message.hashtags
+          |> Enum.map(fn item -> item.text end)
           |> Enum.frequencies()
           |> Map.merge(state.tags, fn _key, value1, value2 ->
             value1 + value2

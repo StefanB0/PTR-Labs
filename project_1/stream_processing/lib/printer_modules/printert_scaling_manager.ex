@@ -46,9 +46,6 @@ defmodule PrintertScalingManager do
   end
 
   def handle_info(:timer, state) do
-    # state = %{state | pool_size: PrinterPoolSupervisor.count_printers().workers, pool: PrinterPoolSupervisor.list_printers()}
-    # IO.puts(state.message_count / Time.diff(Time.utc_now(), state.time_stamp, :second))
-
     state =
       state.message_count / Time.diff(Time.utc_now(), state.time_stamp, :second) / state.load_step
       |> Float.ceil()
@@ -58,7 +55,7 @@ defmodule PrintertScalingManager do
       |> Kernel.-(state.pool_size)
       |> scalePool(state)
 
-    log_message_freq(state)
+    # log_message_freq(state)
     timer(state.time_period)
     state = %{state | message_count: 0, time_stamp: Time.utc_now()}
     {:noreply, state}
@@ -94,7 +91,7 @@ defmodule PrintertScalingManager do
   # Logic
 
   def add_printer(printer_id, state) do
-    IO.puts("Adding printer #{printer_id}")
+    # IO.puts("Adding printer #{printer_id}")
     PrinterPoolSupervisor.add_printer(printer_id, state.printer_delay)
     PrinterPoolManager.add_printer(printer_id)
   end

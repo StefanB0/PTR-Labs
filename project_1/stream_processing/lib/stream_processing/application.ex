@@ -10,7 +10,7 @@ defmodule StreamProcessing.Application do
     children = [
       PrinterSupervisor,
       MessageAnalyst,
-      MessageProcessor,
+      {MessageProcessor, [message_analyst: MessageAnalyst, printer_pool_manager: PrinterPoolManager]},
       ReaderSupervisor
     ]
 

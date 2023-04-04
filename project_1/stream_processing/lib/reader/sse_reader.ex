@@ -27,7 +27,15 @@ defmodule SSEReader do
         GenServer.cast(MessageProcessor, :panic_message)
 
       message ->
-        GenServer.cast(MessageProcessor, {:message, message})
+        message = Map.put(message, :data, Jason.decode!(message.data, keys: :atoms))
+        tweet = %{
+          text: message.data.message.tweet.text,
+          user: message.data.message.tweet.user.screen_name,
+          user_id: message.data.message.tweet.user.id,
+          hashtags: message.data.message.tweet.entities.hashtags,
+        }
+        GenServer.cast(MessageProcessor, {:message, tweet})
+        Debugger.d_inspect(tweet, false)
     end
 
     {:noreply, state}

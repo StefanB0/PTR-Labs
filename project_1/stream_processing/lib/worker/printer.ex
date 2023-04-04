@@ -27,6 +27,7 @@ defmodule Printer do
   def handle_cast({:print, :panic_message}, state) do
     IO.ANSI.format([:red, "Printer #{state.id} panics and crashes"]) |> IO.puts()
     {:stop, :panic, state}
+    {:noreply, state}
   end
 
   def handle_cast({:print, message, iterator}, state) do
@@ -61,13 +62,9 @@ defmodule Printer do
   defp delay(time), do: Process.sleep(time)
 
   defp print_text(message) do
-    message
-    |> Map.get(:data)
-    |> Map.get(:message)
-    |> Map.get(:tweet)
-    |> Map.get(:text)
+    message.text
     |> censor()
-    # |> IO.puts()
+    |> (& Debugger.check_debug() && IO.puts(&1)).()
   end
 
   def censor(text) do
