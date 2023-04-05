@@ -47,7 +47,7 @@ defmodule DummyReader do
       favourites: favourites,
       retweets: retweets,
       user: user_pool |> Enum.random(),
-      user_id: :rand.uniform(1000),
+      user_id: :rand.uniform(5),
       engagement_ratio: 0,
       sentimental_score: 0,
     }

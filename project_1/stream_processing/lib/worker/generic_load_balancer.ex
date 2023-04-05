@@ -41,7 +41,7 @@ defmodule GenericLoadBalancer do
     {:noreply, state}
   end
 
-  def handle_cast({:tweet, :panic_tweet}, state) do
+  def handle_cast({:panic_tweet}, state) do
     state.pool
     |> Enum.min_by(fn {_p, c} -> c end)
     |> elem(0)

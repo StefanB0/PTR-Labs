@@ -28,11 +28,22 @@ defmodule SSEReader do
 
       message ->
         message = Map.put(message, :data, Jason.decode!(message.data, keys: :atoms))
+        # %{
+          #   text: message.data.message.tweet.text,
+          #   user: message.data.message.tweet.user.screen_name,
+          #   user_id: message.data.message.tweet.user.id,
+          #   hashtags: message.data.message.tweet.entities.hashtags,
+          # }
         tweet = %{
           text: message.data.message.tweet.text,
+          hashtags: message.data.message.tweet.entities.hashtags,
+          followers: message.data.message.tweet.user.followers_count,
+          favourites: message.data.message.tweet.favorite_count,
+          retweets: message.data.message.tweet,
           user: message.data.message.tweet.user.screen_name,
           user_id: message.data.message.tweet.user.id,
-          hashtags: message.data.message.tweet.entities.hashtags,
+          engagement_ratio: 0,
+          sentimental_score: 0,
         }
         GenServer.cast(MessageProcessor, {:message, tweet})
         Debugger.d_inspect(tweet, :reader)

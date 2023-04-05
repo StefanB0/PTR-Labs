@@ -19,7 +19,7 @@ defmodule MessageProcessor do
   end
 
   def handle_cast(:panic_message, state) do
-    GenServer.cast(state.load_balancer, {:tweet, :panic_message})
+    GenServer.cast(state.load_balancer, {:panic_tweet})
     {:noreply, state}
   end
 

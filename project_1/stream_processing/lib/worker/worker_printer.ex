@@ -63,7 +63,8 @@ defmodule WorkerPrinter do
 
     if !Debugger.check_debug() do
       tweet.text <> "\n" <>
-      "Engagement ratio: #{tweet.engagement_ratio}, Sentiment score #{tweet.sentimental_score}" |> IO.puts()
+      "Engagement ratio: #{tweet.engagement_ratio}, Sentiment score #{tweet.sentimental_score}" <> "\n---"
+      |> IO.puts()
     end
     Debugger.d_print(tweet.text, :printer)
   end
