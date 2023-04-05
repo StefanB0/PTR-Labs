@@ -22,7 +22,7 @@ defmodule StreamProcessing.MixProject do
         swear_words_file:         "config/swear-words.json",
         worker_delay:              500,
         debug:                    true,
-        debug_options:            [:start_up, :sentiment], # [:reader, :printer, :start_up]
+        debug_options:            [:start_up, :sentiment], # [:sentiment, :reader, :printer, :start_up]
         # starter_printer_nr:       3,
         # min_printer_nr:           3,
         # max_printer_nr:           10,

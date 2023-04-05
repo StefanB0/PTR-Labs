@@ -36,7 +36,7 @@ defmodule DummyReader do
   # Logic
   def create_dummy_message() do
     user_pool = ["George", "John", "Paul", "Ringo"]
-    text_pool = ["Live lattino", "Donkey Ass", "I will go and take a shower", "Social Score"]
+    text_pool = ["Donkey Ass", "Spam my bread", "Straight out of the oven"]
     followers = :rand.uniform(10000)
     favourites = :rand.uniform(followers)
     retweets = :rand.uniform(favourites) / 2

@@ -10,6 +10,7 @@ defmodule SentimentDictionary do
       [word, score] = String.split(line, "\t")
       {word, score |> String.to_integer()}
     end)
+    |> Map.new()
 
     dictionary |> Debugger.d_inspect(:sentiment)
 

@@ -14,8 +14,8 @@ defmodule WorkerSentiment do
     state = %{
       id: name,
       destination: destination,
-      worker_delay: delay_time
-
+      worker_delay: delay_time,
+      sentiment_scores: sentiment_scores
     }
 
     Logger.info("Sentiment #{name} started")
@@ -43,8 +43,9 @@ defmodule WorkerSentiment do
 
   def handle_cast({:tweet, tweet, from}, state) do
     delay(state.worker_delay)
-    tweet = %{tweet | sentimental_score: sentimental_score(tweet)}
+    tweet = %{tweet | sentimental_score: sentimental_score(tweet, state.sentiment_scores)}
     GenServer.cast(state.destination, {:tweet, tweet})
+    Debugger.d_print("Tweet #{tweet.text} has sentimental score #{tweet.sentimental_score}", :sentiment)
 
     GenericLoadBalancer.worker_done(from, state.id)
     {:noreply, state}
@@ -69,5 +70,14 @@ defmodule WorkerSentiment do
 
   defp delay(time), do: Process.sleep(time)
 
-  defp sentimental_score(_tweet), do: 42
+  defp sentimental_score(tweet, dictionary) do
+    tweet.text
+    |> String.downcase()
+    |> String.split(~r{[^a-z0-9]})
+    |> Enum.reject(fn word -> word == "" end)
+    |> Enum.map(fn word -> Map.get(dictionary, word, 0) end)
+    |> average()
+  end
+
+  defp average(list), do: list |> Enum.sum() |> Kernel./(Enum.count(list))
 end
