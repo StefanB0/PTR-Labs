@@ -42,7 +42,8 @@ defmodule WorkerEngagement do
     delay(state.worker_delay)
     tweet = %{tweet | engagement_ratio: engagement_ratio(tweet)}
     GenServer.cast(state.destination, {:tweet, tweet})
-    MessageAnalyst.add_user_engagement(tweet)
+    engagement_tweet = %{user: tweet.user, user_id: tweet.user_id, engagement_ratio: tweet.engagement_ratio}
+    MessageAnalyst.add_user_engagement(engagement_tweet)
 
     GenericLoadBalancer.worker_done(from, state.id)
     {:noreply, state}
