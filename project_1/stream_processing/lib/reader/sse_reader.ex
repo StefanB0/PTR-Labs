@@ -39,7 +39,7 @@ defmodule SSEReader do
           hashtags: message.data.message.tweet.entities.hashtags,
           followers: message.data.message.tweet.user.followers_count,
           favourites: message.data.message.tweet.favorite_count,
-          retweets: message.data.message.tweet,
+          retweets_nr: message.data.message.tweet.retweet_count,
           user: message.data.message.tweet.user.screen_name,
           user_id: message.data.message.tweet.user.id,
           engagement_ratio: 0,

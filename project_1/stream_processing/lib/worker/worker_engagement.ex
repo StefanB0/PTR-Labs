@@ -67,5 +67,5 @@ defmodule WorkerEngagement do
 
   defp delay(time), do: Process.sleep(time)
 
-  defp engagement_ratio(tweet), do: (tweet.favourites + tweet.retweets) / tweet.followers
+  defp engagement_ratio(tweet), do: (tweet.favourites + tweet.retweets_nr) / max(tweet.followers, 1)
 end

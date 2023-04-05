@@ -79,5 +79,6 @@ defmodule WorkerSentiment do
     |> average()
   end
 
+  defp average([]), do: 0
   defp average(list), do: list |> Enum.sum() |> Kernel./(Enum.count(list))
 end

@@ -39,13 +39,13 @@ defmodule DummyReader do
     text_pool = ["Donkey Ass", "Spam my bread", "Straight out of the oven"]
     followers = :rand.uniform(10000)
     favourites = :rand.uniform(followers)
-    retweets = :rand.uniform(favourites) / 2
+    retweets_nr = :rand.uniform(favourites) / 2
     %{
       text: text_pool |> Enum.random(),
       hashtags: [],
       followers: followers,
       favourites: favourites,
-      retweets: retweets,
+      retweets_nr: retweets_nr,
       user: user_pool |> Enum.random(),
       user_id: :rand.uniform(5),
       engagement_ratio: 0,
