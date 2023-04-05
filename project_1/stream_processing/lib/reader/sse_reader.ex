@@ -35,7 +35,7 @@ defmodule SSEReader do
           hashtags: message.data.message.tweet.entities.hashtags,
         }
         GenServer.cast(MessageProcessor, {:message, tweet})
-        Debugger.d_inspect(tweet, false)
+        Debugger.d_inspect(tweet, :reader)
     end
 
     {:noreply, state}

@@ -20,8 +20,9 @@ defmodule StreamProcessing.MixProject do
         eventsource_tweet_url_1:  "localhost:4000/tweets/1",
         eventsource_tweet_url_2:  "localhost:4000/tweets/2",
         swear_words_file:         "config/swear-words.json",
-        print_delay:              500,
+        worker_delay:              500,
         debug:                    true,
+        debug_options:            [:start_up, :sentiment], # [:reader, :printer, :start_up]
         # starter_printer_nr:       3,
         # min_printer_nr:           3,
         # max_printer_nr:           10,
@@ -33,6 +34,7 @@ defmodule StreamProcessing.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:httpoison, "~> 1.5"},
       {:eventsource_ex, "~> 1.1.0"},
       {:jason, "~> 1.3"}
     ]

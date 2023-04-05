@@ -6,123 +6,85 @@ defmodule GenericLoadBalancer do
 
   def init(args) do
     name = Keyword.fetch!(args, :name)
-    pool = Keyword.fetch!(args, :pool)
+    worker_type = Keyword.fetch!(args, :worker_type)
+    pool = Keyword.fetch!(args, :pool) |> Enum.map(fn p -> {p, 0} end)
     state = %{
-      pool: Enum.map(pool, fn p -> {p, 0} end) |> Map.new(),
-      message_queue: [],
-      message_iterator: 0
+      name: name,
+      worker_type: worker_type,
+      pool: pool,
     }
 
     Logger.info("#{name} started")
+    Debugger.d_print("#{name} started", :start_up)
     {:ok, state}
+  end
+
+  def child_spec(args) do
+    id = Keyword.fetch!(args, :name)
+
+    %{
+      id: id,
+      start: {__MODULE__, :start_link, [args]},
+      restart: :permanent,
+    }
   end
 
   ## Server callbacks
 
-  def handle_cast({:add_printer, printer_address}, state) do
-    state = %{state | pool: Map.put(state.pool, printer_address, 0)}
+  def handle_cast({:add_worker, worker_id}, state) do
+    state = state ++ [{worker_id, 0}]
     {:noreply, state}
   end
 
-  def handle_cast({:remove_printer, printer_address}, state) do
-    state = %{
-      state
-      | pool: Map.delete(state.pool, printer_address)
-    }
-
+  def handle_cast({:remove_worker, worker_id}, state) do
+    state = state |> Enum.reject(fn {p, _c} -> p == worker_id end)
     {:noreply, state}
   end
 
-  def handle_cast({:print, :panic_message}, state) do
-    state
-    |> Map.get(:pool)
+  def handle_cast({:tweet, :panic_tweet}, state) do
+    state.pool
     |> Enum.min_by(fn {_p, c} -> c end)
     |> elem(0)
-    |> Printer.panic()
+    |> state.worker_type.panic()
 
     {:noreply, state}
   end
 
-  def handle_cast({:print, message}, state) do
-    {printer_address, printer_score} =
-      state
-      |> Map.get(:pool)
-      |> Enum.min_by(fn {_p, c} ->
-        c
-      end)
-
-    PrintertScalingManager.count_message()
-    Printer.least_loaded_print(printer_address, message, state.message_iterator)
+  def handle_cast({:tweet, tweet}, state) do
+    {worker_id, _worker_score} = state.pool |> Enum.min_by(fn {_p, c} -> c end)
+    state.worker_type.least_loaded(worker_id, tweet, self())
+    # PrintertScalingManager.count_message()
 
     state = %{
-      state
-      | pool: %{state.pool | printer_address => printer_score + 1},
-        message_queue: state.message_queue ++ [{state.message_iterator, Time.utc_now()}],
-        message_iterator: state.message_iterator + 1
+      state | pool: state.pool |> Enum.map(fn {w, c} -> if w == worker_id, do: {w, c + 1}, else: {w, c} end)
     }
 
     {:noreply, state}
   end
 
-  def handle_cast({:print, :done, printer_id, _iterator}, state) do
-    score = Map.get(state.pool, printer_id)
-
+  def handle_cast({:done, worker_id}, state) do
     state = %{
-      state
-      | pool: %{state.pool | printer_id => score - 1}
+      state | pool: state.pool |> Enum.map(fn {w, c} -> if w == worker_id, do: {w, c - 1}, else: {w, c} end)
     }
-
     {:noreply, state}
   end
-
-  # def handle_cast({:resize_pool, pool_size}, state) do
-  #   new_pool = state.pool_size
-  #   |> Kernel.>=(pool_size)
-  #   |> p_resize(state, pool_size)
-
-  #   state = %{
-  #     state |
-  #       pool_size: pool_size,
-  #       pool: new_pool
-  #   }
-
-  #   {:noreply, state}
-  # end
-
-  # defp p_resize(true, state, pool_size) do
-  #   state.pool |> Map.to_list() |> Enum.drop(pool_size) |> Enum.map(fn {p, _v} -> p end) |> Enum.each(fn p -> Supervisor.terminate_child(state.supervisor, p) end)
-  #   state.pool |> Map.to_list() |> Enum.take(pool_size) |> Map.new()
-  # end
-
-  # defp p_resize(false, state, pool_size) do
-  #   delay = Application.fetch_env!(:stream_processing, :print_delay)
-
-  #   Range.new(state.pool_size + 1, pool_size)
-  #   |> Enum.map(fn i -> "printer" <> Integer.to_string(i) |> String.to_atom() end)
-  #   |> Enum.map(fn p -> PrinterSupervisor.add_printer(state.supervisor, p, delay) ; p end)
-  #   |> Enum.map(fn p -> {p, 0} end)
-  #   |> Map.new()
-  # end
 
   # Client API
 
-  def start_link(args \\ [printer_pool: Printer]) do
-    GenServer.start_link(__MODULE__, args, name: __MODULE__)
+  def start_link(args) do
+    name = Keyword.fetch!(args, :name)
+    GenServer.start_link(__MODULE__, args, name: name)
   end
 
-  def print_done(printer_id, iterator) do
-    GenServer.cast(__MODULE__, {:print, :done, printer_id, iterator})
+  def worker_done(balancer_id, worker_id) do
+    GenServer.cast(balancer_id, {:done, worker_id})
   end
 
-  def add_printer(printer_address) do
-    GenServer.cast(__MODULE__, {:add_printer, printer_address})
-  end
+  # def add_printer(printer_address) do
+  #   GenServer.cast(__MODULE__, {:add_printer, printer_address})
+  # end
 
-  def remove_printer(printer_address) do
-    GenServer.cast(__MODULE__, {:remove_printer, printer_address})
-  end
-
-  # def resize_pool(pool_size) do
-  #   GenServer.cast(__MODULE__, {:resize_pool, pool_size})
+  # def remove_printer(printer_address) do
+  #   GenServer.cast(__MODULE__, {:remove_printer, printer_address})
   # end
 end

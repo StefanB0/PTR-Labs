@@ -3,10 +3,10 @@ defmodule MessageProcessor do
   require Logger
 
   # Server API
-  def init(args \\ [printer_pool_manager: PrinterPoolManager]) do
+  def init(args) do
     message_analyst = MessageAnalyst
-    printer_pool_manager = Keyword.fetch!(args, :printer_pool_manager)
-    state = %{message_analyst: message_analyst, printer_pool_manager: printer_pool_manager}
+    load_balancer = Keyword.fetch!(args, :load_balancer)
+    state = %{message_analyst: message_analyst, load_balancer: load_balancer}
     Logger.info("MessageProcessor worker started")
     {:ok, state}
   end
@@ -14,12 +14,12 @@ defmodule MessageProcessor do
   ## Server callbacks
   def handle_cast({:message, message}, state) do
     GenServer.cast(state.message_analyst, {:message, message})
-    GenServer.cast(state.printer_pool_manager, {:print, message})
+    GenServer.cast(state.load_balancer, {:tweet, message})
     {:noreply, state}
   end
 
   def handle_cast(:panic_message, state) do
-    GenServer.cast(PrinterPoolManager, {:print, :panic_message})
+    GenServer.cast(state.load_balancer, {:tweet, :panic_message})
     {:noreply, state}
   end
 

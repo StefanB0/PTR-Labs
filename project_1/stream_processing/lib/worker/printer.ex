@@ -62,9 +62,10 @@ defmodule Printer do
   defp delay(time), do: Process.sleep(time)
 
   defp print_text(message) do
-    message.text
-    |> censor()
-    |> (& Debugger.check_debug() && IO.puts(&1)).()
+    tweet_text = message.text |> censor()
+    if !Debugger.check_debug(:printer) do
+      tweet_text |> IO.puts()
+    end
   end
 
   def censor(text) do
