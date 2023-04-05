@@ -88,3 +88,4 @@ defmodule GenericLoadBalancer do
   #   GenServer.cast(__MODULE__, {:remove_printer, printer_address})
   # end
 end
+# TODO Add dynamic scaling

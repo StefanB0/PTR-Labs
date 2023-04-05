@@ -32,3 +32,6 @@ defmodule MessageProcessor do
   # Logic
 
 end
+
+# TODO Processor splits the tweet into parts relevant to redacter, sentiment and engagement. Then it sends to all three. Each tweet also gets an id.
+# TODO "Bonus Task" before sending a tweet anywhere, recursively get all retweets out of it.
