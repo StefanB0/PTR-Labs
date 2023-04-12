@@ -27,16 +27,22 @@ defmodule StreamProcessing.Application do
       CensorList,
       SentimentDictionary,
       IdCounter,
-      MessageAnalyst,
+
+      ETS.Database,
+
       Aggregator,
       Batcher,
+      MessageAnalyst,
 
       supervisor_sentiment.spec,
       supervisor_engagement.spec,
       supervisor_redacter.spec,
       {MessageProcessor, [message_analyst: MessageAnalyst, target: target]},
-      ReaderSupervisor
-      # {DummyReader, [id: :dummy_reader1]}
+
+      ReaderSupervisor,
+      # {DummyReader, [id: :dummy_reader1]},
+
+      Database.UserInterface,
     ]
 
     opts = [strategy: :one_for_one, name: StreamProcessing.Supervisor]

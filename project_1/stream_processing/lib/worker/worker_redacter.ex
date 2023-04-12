@@ -33,7 +33,7 @@ defmodule WorkerRedacter do
   ## Server callbacks
 
   def handle_cast({:panic_message}, state) do
-    IO.ANSI.format([:red, "Worker #{state.id} panics and crashes"]) |> IO.puts()
+    # IO.ANSI.format([:red, "Worker #{state.id} panics and crashes"]) |> IO.puts()
     {:stop, :panic, state}
     {:noreply, state}
   end

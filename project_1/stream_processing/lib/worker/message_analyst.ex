@@ -6,7 +6,6 @@ defmodule MessageAnalyst do
 
   def init(_args) do
     state = %{tags: %{"Hello-world" => 0}, users: %{0 => %{name: "NaN", engagement: 0, posts: 0}}}
-    spawn_link(&run_timer/0)
     Logger.info("MessageAnalyst worker started")
     {:ok, state}
   end

@@ -27,19 +27,23 @@ defmodule Batcher do
   ## Server callbacks
 
   def handle_cast({:tweet, tweet}, state) do
+    Process.cancel_timer(state.pull_timer)
     batch = state.batch ++ [tweet]
-    {batch, timer} = process_batch(batch, state)
-    state = %{state | batch: batch, timer: timer}
-    state = pull_tweet(state)
+    batch = process_batch(batch, state)
+    pull_timer = Process.send_after(self(), :pull_tweet, 10000)
+    state = %{state | batch: batch, pull_timer: pull_timer}
     {:noreply, state}
   end
 
   def handle_info(:print_batch, state) do
-    IO.puts("\n\n---Partially printing batch---\n\n")
-    print_batch(state.batch)
+    Logger.info("Sending Batch early")
+    Process.cancel_timer(state.timer)
+    Process.cancel_timer(state.pull_timer)
+    send_batch(state.batch)
     timer = Process.send_after(self(), :print_batch, state.batch_expire)
-    Debugger.d_print("Timer procced", :batcher)
-    {:noreply, %{state | batch: [], timer: timer}}
+    pull_timer = Process.send_after(self(), :pull_tweet, 10000)
+    state = %{state | timer: timer, pull_timer: pull_timer, batch: []}
+    {:noreply, state}
   end
 
   def handle_info(:pull_tweet, state) do
@@ -66,32 +70,24 @@ defmodule Batcher do
     %{state | pull_timer: Process.send_after(self(), :pull_tweet, 10000)}
   end
 
+  defp process_batch(batch, true), do: send_batch(batch)
+  defp process_batch(batch, false), do: batch
   defp process_batch(batch, state) do
-    process_batch(batch, state, length(batch) >= state.batch_size)
+    process_batch(batch, length(batch) >= state.batch_size)
   end
 
-  defp process_batch(batch, state, true) do
-    print_batch(batch)
-    Process.cancel_timer(state.timer)
-    timer = Process.send_after(self(), :print_batch, state.batch_expire)
-    {[], timer}
+  defp check_database? do
+    if GenServer.whereis(ETS.Database) == nil do
+      Debugger.d_print("Database is down", :batcher)
+      Process.sleep(1000)
+      check_database?()
+    end
+    Debugger.d_print("Database is up", :batcher)
   end
 
-  defp process_batch(batch, state, false), do: {batch, state.timer}
-
-  defp print_batch([]), do: nil
-
-  defp print_batch(batch) do
-    IO.puts("\n\n---Batch Start---")
-    batch |> Enum.each(&print_tweet/1)
-    IO.puts("---Batch Finish---")
-  end
-
-  defp print_tweet(tweet) do
-    (tweet.text <>
-       "\n" <>
-       "Engagement ratio: #{tweet.engagement_ratio}, Sentiment score #{tweet.sentimental_score}" <>
-       "\n---")
-    |> IO.puts()
+  defp send_batch(batch) do
+    check_database?()
+    batch |> Enum.each(&ETS.Database.insert_tweet/1)
+    []
   end
 end

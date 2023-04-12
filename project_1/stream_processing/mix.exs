@@ -23,14 +23,10 @@ defmodule StreamProcessing.MixProject do
         worker_delay: 500,
         # debug:                    true,
         debug: false,
-        # [:batcher, :aggregator, :user_engagement, :sentiment, :reader, :printer, :start_up]
-        debug_options: [:batcher, :aggregator],
-        batch_size: 20000,
+        # [:ets_database :batcher, :aggregator, :user_engagement, :sentiment, :reader, :printer, :start_up]
+        debug_options: [:ets_database, :batcher],
+        batch_size: 50000,
         batch_expire: 5000
-        # starter_printer_nr:       3,
-        # min_printer_nr:           3,
-        # max_printer_nr:           10,
-        # load_step:                10 # Tweets per second
       ]
     ]
   end
