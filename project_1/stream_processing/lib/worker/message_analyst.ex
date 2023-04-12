@@ -48,7 +48,6 @@ defmodule MessageAnalyst do
     user = state.users[tweet.user_id] || %{name: tweet.user, engagement: 0, posts: 0}
     new_engagement = (user.engagement * user.posts + tweet.engagement_ratio) / (user.posts + 1)
     user = %{user | engagement: new_engagement, posts: user.posts + 1}
-    # user_base = %{state.users | tweet.user_id => user}
     user_base = Map.put(state.users, tweet.user_id, user)
     state = %{state | users: user_base}
 

@@ -28,11 +28,6 @@ defmodule GenericPoolSupervisor do
 
   # Client API
   def generic_pool_super(id_nr, pool_size, destination, worker_type) do
-    # pool = Enum.map(1..pool_size, fn i ->
-    #   {worker_type, [id: :"#{worker_type}_#{i}", delay: 1000]}
-    # end)
-    # {GenericPoolSupervisor, [id: :pool, children: pool]}
-
     name = worker_type |> Atom.to_string() |> String.trim_leading("Elixir.")
     supervisor_name = (name <> "_supervisor") |> String.to_atom()
 
@@ -45,7 +40,6 @@ defmodule GenericPoolSupervisor do
 
     balancer = generic_balancer_spec(id_nr, balancer_pool_names, worker_type)
     balancer_address = (name <> "_load_balancer_#{id_nr}") |> String.to_atom()
-    # worker_1 = generic_worker_spec(1, id_nr, destination, worker_type)
 
     children = pool ++ [balancer]
 
@@ -55,12 +49,6 @@ defmodule GenericPoolSupervisor do
       spec: {GenericPoolSupervisor, [id: supervisor_name, children: children]}
     }
   end
-
-  # def generic_worker_super(id, worker_type) do
-  # {WorkerRedacter, [id: :worker1, destination: :load_balancer2, delay: 1000]}
-  # id = "#{worker_type}_worker_s_#{id}" |> String.to_atom()
-  # {GenericPoolSupervisor, [id: id, children: [{worker_type, [id: id, delay: 1000]}]
-  # end
 
   def generic_worker_spec(id, super_id_nr, destination, worker_type) do
     type = worker_type |> Atom.to_string() |> String.trim_leading("Elixir.") |> String.downcase()

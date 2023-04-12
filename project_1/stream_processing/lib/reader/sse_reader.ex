@@ -28,28 +28,6 @@ defmodule SSEReader do
 
       message ->
         message = Map.put(message, :data, Jason.decode!(message.data, keys: :atoms))
-        # %{
-        #   text: message.data.message.tweet.text,
-        #   user: message.data.message.tweet.user.screen_name,
-        #   user_id: message.data.message.tweet.user.id,
-        #   hashtags: message.data.message.tweet.entities.hashtags,
-        # }
-        # tweet = %{
-        #   tweet_id: IdCounter.increment_id(),
-        #   text: message.data.message.tweet.text,
-        #   hashtags: message.data.message.tweet.entities.hashtags,
-        #   followers: message.data.message.tweet.user.followers_count,
-        #   favourites: message.data.message.tweet.favorite_count,
-        #   retweets_nr: message.data.message.tweet.retweet_count,
-        #   user: message.data.message.tweet.user.screen_name,
-        #   user_id: message.data.message.tweet.user.id,
-        #   engagement_ratio: 0,
-        #   sentimental_score: 0,
-        #   worker_p: nil,
-        #   redact_p: false,
-        #   sentiment_p: false,
-        #   engagement_p: false,
-        # }
         tweet_body = message.data.message.tweet
         tweet = unwrap_tweet(tweet_body)
 
@@ -78,7 +56,6 @@ defmodule SSEReader do
   # Logic
 
   def unwrap_tweet(tweet_body) do
-    # tweet_body = message.data.message.tweet
     %{
       tweet_id: IdCounter.increment_id(),
       text: tweet_body.text,

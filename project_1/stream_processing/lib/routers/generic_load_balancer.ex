@@ -54,7 +54,6 @@ defmodule GenericLoadBalancer do
   def handle_cast({:tweet, tweet}, state) do
     {worker_id, _worker_score} = state.pool |> Enum.min_by(fn {_p, c} -> c end)
     state.worker_type.least_loaded(worker_id, tweet, self())
-    # PrintertScalingManager.count_message()
 
     state = %{
       state
@@ -85,13 +84,4 @@ defmodule GenericLoadBalancer do
   def worker_done(balancer_id, worker_id) do
     GenServer.cast(balancer_id, {:done, worker_id})
   end
-
-  # def add_printer(printer_address) do
-  #   GenServer.cast(__MODULE__, {:add_printer, printer_address})
-  # end
-
-  # def remove_printer(printer_address) do
-  #   GenServer.cast(__MODULE__, {:remove_printer, printer_address})
-  # end
 end
-

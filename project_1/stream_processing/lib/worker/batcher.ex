@@ -5,8 +5,6 @@ defmodule Batcher do
   # Server API
 
   def init(_args) do
-    # batch_size = Keyword.fetch!(args, :batch_size)
-    # batch_expire = Keyword.fetch!(args, :batch_expire)
     batch_size = Application.get_env(:stream_processing, :batch_size)
     batch_expire = Application.get_env(:stream_processing, :batch_expire)
     timer = Process.send_after(self(), :print_batch, batch_expire)
@@ -29,7 +27,6 @@ defmodule Batcher do
   ## Server callbacks
 
   def handle_cast({:tweet, tweet}, state) do
-    # Debugger.d_print("Tweet received, #{tweet.tweet_id}", :batcher)
     batch = state.batch ++ [tweet]
     {batch, timer} = process_batch(batch, state)
     state = %{state | batch: batch, timer: timer}

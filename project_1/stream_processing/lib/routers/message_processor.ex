@@ -13,14 +13,11 @@ defmodule MessageProcessor do
 
   ## Server callbacks
   def handle_cast({:message, message}, state) do
-    # GenServer.cast(state.message_analyst, {:message, message})
-    # GenServer.cast(state.target, {:tweet, message})
     (state.target ++ [state.message_analyst]) |> forward_message(message)
     {:noreply, state}
   end
 
   def handle_cast(:panic_message, state) do
-    # GenServer.cast(state.target, {:panic_tweet})
     forward_panic(state.target)
     {:noreply, state}
   end
@@ -41,4 +38,3 @@ defmodule MessageProcessor do
     targets |> Enum.each(fn target -> GenServer.cast(target, {:panic_tweet}) end)
   end
 end
-
