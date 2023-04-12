@@ -29,7 +29,7 @@ defmodule WorkerSentiment do
     %{
       id: id,
       start: {__MODULE__, :start_link, [args]},
-      restart: :transient,
+      restart: :transient
     }
   end
 
@@ -43,9 +43,20 @@ defmodule WorkerSentiment do
 
   def handle_cast({:tweet, tweet, from}, state) do
     delay(state.worker_delay)
-    tweet = %{tweet | sentimental_score: sentimental_score(tweet, state.sentiment_scores), sentiment_p: true, worker_p: "sentiment"}
+
+    tweet = %{
+      tweet
+      | sentimental_score: sentimental_score(tweet, state.sentiment_scores),
+        sentiment_p: true,
+        worker_p: "sentiment"
+    }
+
     GenServer.cast(state.destination, {:tweet, tweet})
-    Debugger.d_print("Tweet #{tweet.text} has sentimental score #{tweet.sentimental_score}", :sentiment)
+
+    Debugger.d_print(
+      "Tweet #{tweet.text} has sentimental score #{tweet.sentimental_score}",
+      :sentiment
+    )
 
     GenericLoadBalancer.worker_done(from, state.id)
     {:noreply, state}

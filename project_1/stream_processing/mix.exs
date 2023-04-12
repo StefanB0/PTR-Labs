@@ -17,15 +17,16 @@ defmodule StreamProcessing.MixProject do
       extra_applications: [:logger],
       mod: {StreamProcessing.Application, []},
       env: [
-        eventsource_tweet_url_1:  "localhost:4000/tweets/1",
-        eventsource_tweet_url_2:  "localhost:4000/tweets/2",
-        swear_words_file:         "config/swear-words.json",
-        worker_delay:             500,
+        eventsource_tweet_url_1: "localhost:4000/tweets/1",
+        eventsource_tweet_url_2: "localhost:4000/tweets/2",
+        swear_words_file: "config/swear-words.json",
+        worker_delay: 500,
         # debug:                    true,
-        debug:                    false,
-        debug_options:            [:batcher, :aggregator], # [:batcher, :aggregator, :user_engagement, :sentiment, :reader, :printer, :start_up]
-        batch_size:               20,
-        batch_expire:             5000,
+        debug: false,
+        # [:batcher, :aggregator, :user_engagement, :sentiment, :reader, :printer, :start_up]
+        debug_options: [:batcher, :aggregator],
+        batch_size: 20000,
+        batch_expire: 5000
         # starter_printer_nr:       3,
         # min_printer_nr:           3,
         # max_printer_nr:           10,

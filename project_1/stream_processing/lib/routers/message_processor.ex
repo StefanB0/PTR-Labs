@@ -15,7 +15,7 @@ defmodule MessageProcessor do
   def handle_cast({:message, message}, state) do
     # GenServer.cast(state.message_analyst, {:message, message})
     # GenServer.cast(state.target, {:tweet, message})
-    state.target ++ [state.message_analyst] |> forward_message(message)
+    (state.target ++ [state.message_analyst]) |> forward_message(message)
     {:noreply, state}
   end
 
@@ -40,8 +40,5 @@ defmodule MessageProcessor do
   defp forward_panic(targets) do
     targets |> Enum.each(fn target -> GenServer.cast(target, {:panic_tweet}) end)
   end
-
 end
 
-# TODO Processor splits the tweet into parts relevant to redacter, sentiment and engagement. Then it sends to all three. Each tweet also gets an id.
-# TODO "Bonus Task" before sending a tweet anywhere, recursively get all retweets out of it.

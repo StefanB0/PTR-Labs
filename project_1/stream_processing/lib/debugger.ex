@@ -12,6 +12,7 @@ defmodule Debugger do
   end
 
   def check_debug(option \\ :none) do
-    Application.get_env(:stream_processing, :debug) && (option == :none || option in Application.get_env(:stream_processing, :debug_options))
+    Application.get_env(:stream_processing, :debug) &&
+      (option == :none || option in Application.get_env(:stream_processing, :debug_options))
   end
 end

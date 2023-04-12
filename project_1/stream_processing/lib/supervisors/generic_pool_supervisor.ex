@@ -19,9 +19,10 @@ defmodule GenericPoolSupervisor do
 
   def child_spec(args) do
     id = Keyword.fetch!(args, :id)
+
     %{
       id: id,
-      start: {__MODULE__, :start_link, [args]},
+      start: {__MODULE__, :start_link, [args]}
     }
   end
 
@@ -33,30 +34,32 @@ defmodule GenericPoolSupervisor do
     # {GenericPoolSupervisor, [id: :pool, children: pool]}
 
     name = worker_type |> Atom.to_string() |> String.trim_leading("Elixir.")
-    supervisor_name = name <> "_supervisor" |> String.to_atom()
+    supervisor_name = (name <> "_supervisor") |> String.to_atom()
 
-    pool = Enum.map(1..pool_size, fn i ->
-      generic_worker_spec(i, id_nr, destination, worker_type)
-    end)
+    pool =
+      Enum.map(1..pool_size, fn i ->
+        generic_worker_spec(i, id_nr, destination, worker_type)
+      end)
 
     balancer_pool_names = Enum.map(pool, fn {_, sp} -> Keyword.fetch!(sp, :id) end)
 
     balancer = generic_balancer_spec(id_nr, balancer_pool_names, worker_type)
-    balancer_address = name <> "_load_balancer_#{id_nr}" |> String.to_atom()
+    balancer_address = (name <> "_load_balancer_#{id_nr}") |> String.to_atom()
     # worker_1 = generic_worker_spec(1, id_nr, destination, worker_type)
 
     children = pool ++ [balancer]
+
     %{
       supervisor_address: supervisor_name,
       balancer_address: balancer_address,
-      spec: {GenericPoolSupervisor, [id: supervisor_name, children: children ]},
+      spec: {GenericPoolSupervisor, [id: supervisor_name, children: children]}
     }
   end
 
   # def generic_worker_super(id, worker_type) do
-    # {WorkerRedacter, [id: :worker1, destination: :load_balancer2, delay: 1000]}
-    # id = "#{worker_type}_worker_s_#{id}" |> String.to_atom()
-    # {GenericPoolSupervisor, [id: id, children: [{worker_type, [id: id, delay: 1000]}]
+  # {WorkerRedacter, [id: :worker1, destination: :load_balancer2, delay: 1000]}
+  # id = "#{worker_type}_worker_s_#{id}" |> String.to_atom()
+  # {GenericPoolSupervisor, [id: id, children: [{worker_type, [id: id, delay: 1000]}]
   # end
 
   def generic_worker_spec(id, super_id_nr, destination, worker_type) do
@@ -68,7 +71,7 @@ defmodule GenericPoolSupervisor do
 
   def generic_balancer_spec(id_nr, pool, worker_type) do
     name = worker_type |> Atom.to_string() |> String.trim_leading("Elixir.")
-    balancer_name = name <> "_load_balancer_#{id_nr}" |> String.to_atom()
+    balancer_name = (name <> "_load_balancer_#{id_nr}") |> String.to_atom()
     {GenericLoadBalancer, [name: balancer_name, pool: pool, worker_type: worker_type]}
   end
 end

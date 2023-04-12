@@ -12,7 +12,14 @@ defmodule Batcher do
     timer = Process.send_after(self(), :print_batch, batch_expire)
     pull_timer = Process.send_after(self(), :pull_tweet, 10000)
 
-    state = %{batch: [], batch_size: batch_size, batch_expire: batch_expire, timer: timer, pull_timer: pull_timer}
+    state = %{
+      batch: [],
+      batch_size: batch_size,
+      batch_expire: batch_expire,
+      timer: timer,
+      pull_timer: pull_timer
+    }
+
     pull_tweet(state)
     Logger.info("Batcher worker started")
     Debugger.d_print("Batcher worker started", :start_up)
@@ -76,6 +83,7 @@ defmodule Batcher do
   defp process_batch(batch, state, false), do: {batch, state.timer}
 
   defp print_batch([]), do: nil
+
   defp print_batch(batch) do
     IO.puts("\n\n---Batch Start---")
     batch |> Enum.each(&print_tweet/1)
@@ -83,18 +91,10 @@ defmodule Batcher do
   end
 
   defp print_tweet(tweet) do
-    tweet.text <> "\n" <>
-    "Engagement ratio: #{tweet.engagement_ratio}, Sentiment score #{tweet.sentimental_score}" <> "\n---"
+    (tweet.text <>
+       "\n" <>
+       "Engagement ratio: #{tweet.engagement_ratio}, Sentiment score #{tweet.sentimental_score}" <>
+       "\n---")
     |> IO.puts()
   end
-
-  # TODO function to print a tweet
-  # TODO function to print many tweets
-  # TODO add initialization to the sub-root supervisor
-  # TODO mix.env add batch size parameter
-
-  # TODO add timer on which the batcher prints all tweets it has
-  # TODO reset timer when batcher prints normally
-
-  # TODO add reactive pull. On init sent the aggregator a request. Every time it finished processing the response send another request
 end

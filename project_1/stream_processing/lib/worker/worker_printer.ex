@@ -19,7 +19,7 @@ defmodule WorkerPrinter do
     %{
       id: id,
       start: {__MODULE__, :start_link, [args]},
-      restart: :transient,
+      restart: :transient
     }
   end
 
@@ -62,10 +62,13 @@ defmodule WorkerPrinter do
     # tweet_text = tweet.text |> censor()
 
     if !Debugger.check_debug() do
-      tweet.text <> "\n" <>
-      "Engagement ratio: #{tweet.engagement_ratio}, Sentiment score #{tweet.sentimental_score}" <> "\n---"
+      (tweet.text <>
+         "\n" <>
+         "Engagement ratio: #{tweet.engagement_ratio}, Sentiment score #{tweet.sentimental_score}" <>
+         "\n---")
       |> IO.puts()
     end
+
     Debugger.d_print(tweet.text, :printer)
   end
 
@@ -73,11 +76,12 @@ defmodule WorkerPrinter do
     text
     |> String.split()
     |> Enum.map(fn word ->
-        censor_word?(word) && (String.graphemes(word) |> Enum.map(fn _ -> "*" end) |> Enum.join())
-        || word
-      end)
+      (censor_word?(word) && String.graphemes(word) |> Enum.map(fn _ -> "*" end) |> Enum.join()) ||
+        word
+    end)
     |> Enum.join(" ")
   end
 
-  defp censor_word?(word), do: CensorList.get_word_list()|> Enum.member?(word |> String.downcase())
+  defp censor_word?(word),
+    do: CensorList.get_word_list() |> Enum.member?(word |> String.downcase())
 end

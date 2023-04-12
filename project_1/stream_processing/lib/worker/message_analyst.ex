@@ -15,13 +15,14 @@ defmodule MessageAnalyst do
 
   def handle_cast({:tweet, message}, state) do
     state = %{
-      state | tags:
-        message.hashtags
-        |> Enum.map(fn item -> item.text end)
-        |> Enum.frequencies()
-        |> Map.merge(state.tags, fn _key, value1, value2 ->
-          value1 + value2
-        end)
+      state
+      | tags:
+          message.hashtags
+          |> Enum.map(fn item -> item.text end)
+          |> Enum.frequencies()
+          |> Map.merge(state.tags, fn _key, value1, value2 ->
+            value1 + value2
+          end)
     }
 
     {:noreply, state}
@@ -32,12 +33,14 @@ defmodule MessageAnalyst do
     |> Enum.max_by(fn {_k, v} -> v end)
     |> (&"Most popular hashtag is: ##{elem(&1, 0)}: #{elem(&1, 1)}").()
     |> (&IO.ANSI.format([:green, &1])).()
-    |> then(& !Debugger.check_debug() && IO.puts(&1))
+    |> then(&(!Debugger.check_debug() && IO.puts(&1)))
 
     most_engaged_user = state.users |> Enum.max_by(fn {_k, v} -> v.engagement end) |> elem(1)
+
     "Most engaged user is: #{most_engaged_user.name} with #{most_engaged_user.engagement} engagement and #{most_engaged_user.posts} posts"
     |> then(&IO.ANSI.format([:green, &1]))
-    |> then(& !Debugger.check_debug() && IO.puts(&1))
+    |> then(&(!Debugger.check_debug() && IO.puts(&1)))
+
     {:noreply, state}
   end
 
@@ -49,7 +52,11 @@ defmodule MessageAnalyst do
     user_base = Map.put(state.users, tweet.user_id, user)
     state = %{state | users: user_base}
 
-    Debugger.d_print("User #{tweet.user_id} has #{user.posts} posts and #{user.engagement} engagement", :user_engagement)
+    Debugger.d_print(
+      "User #{tweet.user_id} has #{user.posts} posts and #{user.engagement} engagement",
+      :user_engagement
+    )
+
     {:noreply, state}
   end
 

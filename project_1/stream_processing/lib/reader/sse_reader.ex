@@ -29,11 +29,11 @@ defmodule SSEReader do
       message ->
         message = Map.put(message, :data, Jason.decode!(message.data, keys: :atoms))
         # %{
-          #   text: message.data.message.tweet.text,
-          #   user: message.data.message.tweet.user.screen_name,
-          #   user_id: message.data.message.tweet.user.id,
-          #   hashtags: message.data.message.tweet.entities.hashtags,
-          # }
+        #   text: message.data.message.tweet.text,
+        #   user: message.data.message.tweet.user.screen_name,
+        #   user_id: message.data.message.tweet.user.id,
+        #   hashtags: message.data.message.tweet.entities.hashtags,
+        # }
         # tweet = %{
         #   tweet_id: IdCounter.increment_id(),
         #   text: message.data.message.tweet.text,
@@ -52,10 +52,15 @@ defmodule SSEReader do
         # }
         tweet_body = message.data.message.tweet
         tweet = unwrap_tweet(tweet_body)
-        retweet = (tweet_body[:retweeted_status] != nil && unwrap_tweet(tweet_body.retweeted_status)) || nil
+
+        retweet =
+          (tweet_body[:retweeted_status] != nil && unwrap_tweet(tweet_body.retweeted_status)) ||
+            nil
+
         unless retweet == nil do
           GenServer.cast(MessageProcessor, {:message, retweet})
         end
+
         GenServer.cast(MessageProcessor, {:message, tweet})
         Debugger.d_inspect(tweet, :reader)
     end
@@ -88,7 +93,7 @@ defmodule SSEReader do
       worker_p: nil,
       redact_p: false,
       sentiment_p: false,
-      engagement_p: false,
+      engagement_p: false
     }
   end
 end

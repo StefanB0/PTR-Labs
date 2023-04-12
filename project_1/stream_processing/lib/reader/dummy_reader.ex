@@ -41,6 +41,7 @@ defmodule DummyReader do
     followers = :rand.uniform(10000)
     favourites = :rand.uniform(followers)
     retweets_nr = :rand.uniform(favourites) / 2
+
     %{
       tweet_id: IdCounter.increment_id(),
       text: text_pool |> Enum.random(),
@@ -55,7 +56,7 @@ defmodule DummyReader do
       worker_p: nil,
       redact_p: false,
       sentiment_p: false,
-      engagement_p: false,
+      engagement_p: false
     }
   end
 end

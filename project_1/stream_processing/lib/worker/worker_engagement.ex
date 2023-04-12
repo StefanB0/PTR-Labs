@@ -26,7 +26,7 @@ defmodule WorkerEngagement do
     %{
       id: id,
       start: {__MODULE__, :start_link, [args]},
-      restart: :transient,
+      restart: :transient
     }
   end
 
@@ -40,9 +40,22 @@ defmodule WorkerEngagement do
 
   def handle_cast({:tweet, tweet, from}, state) do
     delay(state.worker_delay)
-    tweet = %{tweet | engagement_ratio: engagement_ratio(tweet), engagement_p: true, worker_p: "engagement"}
+
+    tweet = %{
+      tweet
+      | engagement_ratio: engagement_ratio(tweet),
+        engagement_p: true,
+        worker_p: "engagement"
+    }
+
     GenServer.cast(state.destination, {:tweet, tweet})
-    engagement_tweet = %{user: tweet.user, user_id: tweet.user_id, engagement_ratio: tweet.engagement_ratio}
+
+    engagement_tweet = %{
+      user: tweet.user,
+      user_id: tweet.user_id,
+      engagement_ratio: tweet.engagement_ratio
+    }
+
     MessageAnalyst.add_user_engagement(engagement_tweet)
 
     GenericLoadBalancer.worker_done(from, state.id)
@@ -68,5 +81,6 @@ defmodule WorkerEngagement do
 
   defp delay(time), do: Process.sleep(time)
 
-  defp engagement_ratio(tweet), do: (tweet.favourites + tweet.retweets_nr) / max(tweet.followers, 1)
+  defp engagement_ratio(tweet),
+    do: (tweet.favourites + tweet.retweets_nr) / max(tweet.followers, 1)
 end

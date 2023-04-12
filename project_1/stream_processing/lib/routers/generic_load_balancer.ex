@@ -8,10 +8,11 @@ defmodule GenericLoadBalancer do
     name = Keyword.fetch!(args, :name)
     worker_type = Keyword.fetch!(args, :worker_type)
     pool = Keyword.fetch!(args, :pool) |> Enum.map(fn p -> {p, 0} end)
+
     state = %{
       name: name,
       worker_type: worker_type,
-      pool: pool,
+      pool: pool
     }
 
     Logger.info("#{name} started")
@@ -25,7 +26,7 @@ defmodule GenericLoadBalancer do
     %{
       id: id,
       start: {__MODULE__, :start_link, [args]},
-      restart: :permanent,
+      restart: :permanent
     }
   end
 
@@ -56,7 +57,9 @@ defmodule GenericLoadBalancer do
     # PrintertScalingManager.count_message()
 
     state = %{
-      state | pool: state.pool |> Enum.map(fn {w, c} -> if w == worker_id, do: {w, c + 1}, else: {w, c} end)
+      state
+      | pool:
+          state.pool |> Enum.map(fn {w, c} -> if w == worker_id, do: {w, c + 1}, else: {w, c} end)
     }
 
     {:noreply, state}
@@ -64,8 +67,11 @@ defmodule GenericLoadBalancer do
 
   def handle_cast({:done, worker_id}, state) do
     state = %{
-      state | pool: state.pool |> Enum.map(fn {w, c} -> if w == worker_id, do: {w, c - 1}, else: {w, c} end)
+      state
+      | pool:
+          state.pool |> Enum.map(fn {w, c} -> if w == worker_id, do: {w, c - 1}, else: {w, c} end)
     }
+
     {:noreply, state}
   end
 
@@ -88,4 +94,4 @@ defmodule GenericLoadBalancer do
   #   GenServer.cast(__MODULE__, {:remove_printer, printer_address})
   # end
 end
-# TODO Add dynamic scaling
+

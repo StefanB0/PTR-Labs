@@ -7,7 +7,13 @@ defmodule Agents.WorkerAddressBook do
     redacter_pool = []
     sentiment_pool = []
     engagement_pool = []
-    state = %{redacter_pool: redacter_pool, sentiment_pool: sentiment_pool, engagement_pool: engagement_pool}
+
+    state = %{
+      redacter_pool: redacter_pool,
+      sentiment_pool: sentiment_pool,
+      engagement_pool: engagement_pool
+    }
+
     Agent.start_link(fn -> state end, name: __MODULE__)
   end
 
