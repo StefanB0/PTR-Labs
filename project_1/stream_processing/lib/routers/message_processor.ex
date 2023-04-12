@@ -5,21 +5,23 @@ defmodule MessageProcessor do
   # Server API
   def init(args) do
     message_analyst = MessageAnalyst
-    load_balancer = Keyword.fetch!(args, :load_balancer)
-    state = %{message_analyst: message_analyst, load_balancer: load_balancer}
+    target = Keyword.fetch!(args, :target)
+    state = %{message_analyst: message_analyst, target: target}
     Logger.info("MessageProcessor worker started")
     {:ok, state}
   end
 
   ## Server callbacks
   def handle_cast({:message, message}, state) do
-    GenServer.cast(state.message_analyst, {:message, message})
-    GenServer.cast(state.load_balancer, {:tweet, message})
+    # GenServer.cast(state.message_analyst, {:message, message})
+    # GenServer.cast(state.target, {:tweet, message})
+    state.target ++ [state.message_analyst] |> forward_message(message)
     {:noreply, state}
   end
 
   def handle_cast(:panic_message, state) do
-    GenServer.cast(state.load_balancer, {:panic_tweet})
+    # GenServer.cast(state.target, {:panic_tweet})
+    forward_panic(state.target)
     {:noreply, state}
   end
 
@@ -30,6 +32,14 @@ defmodule MessageProcessor do
   end
 
   # Logic
+
+  defp forward_message(targets, message) do
+    targets |> Enum.each(fn target -> GenServer.cast(target, {:tweet, message}) end)
+  end
+
+  defp forward_panic(targets) do
+    targets |> Enum.each(fn target -> GenServer.cast(target, {:panic_tweet}) end)
+  end
 
 end
 

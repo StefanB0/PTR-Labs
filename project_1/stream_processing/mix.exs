@@ -20,10 +20,12 @@ defmodule StreamProcessing.MixProject do
         eventsource_tweet_url_1:  "localhost:4000/tweets/1",
         eventsource_tweet_url_2:  "localhost:4000/tweets/2",
         swear_words_file:         "config/swear-words.json",
-        worker_delay:              500,
+        worker_delay:             500,
         # debug:                    true,
         debug:                    false,
-        debug_options:            [:user_engagement], # [:user_engagement, :sentiment, :reader, :printer, :start_up]
+        debug_options:            [:batcher, :aggregator], # [:batcher, :aggregator, :user_engagement, :sentiment, :reader, :printer, :start_up]
+        batch_size:               20,
+        batch_expire:             5000,
         # starter_printer_nr:       3,
         # min_printer_nr:           3,
         # max_printer_nr:           10,

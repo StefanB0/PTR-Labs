@@ -40,7 +40,7 @@ defmodule WorkerRedacter do
 
   def handle_cast({:tweet, tweet, from}, state) do
     delay(state.print_delay)
-    tweet = %{tweet | text: censor(tweet.text)}
+    tweet = %{tweet | text: censor(tweet.text), redact_p: true, worker_p: "redacter"}
     GenServer.cast(state.destination, {:tweet, tweet})
 
     GenericLoadBalancer.worker_done(from, state.id)

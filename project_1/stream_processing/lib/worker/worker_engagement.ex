@@ -40,7 +40,7 @@ defmodule WorkerEngagement do
 
   def handle_cast({:tweet, tweet, from}, state) do
     delay(state.worker_delay)
-    tweet = %{tweet | engagement_ratio: engagement_ratio(tweet)}
+    tweet = %{tweet | engagement_ratio: engagement_ratio(tweet), engagement_p: true, worker_p: "engagement"}
     GenServer.cast(state.destination, {:tweet, tweet})
     engagement_tweet = %{user: tweet.user, user_id: tweet.user_id, engagement_ratio: tweet.engagement_ratio}
     MessageAnalyst.add_user_engagement(engagement_tweet)

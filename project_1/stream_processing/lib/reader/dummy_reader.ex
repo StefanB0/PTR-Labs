@@ -23,6 +23,7 @@ defmodule DummyReader do
   def handle_info(:loop, state) do
     send(self(), :loop)
     GenServer.cast(MessageProcessor, {:message, create_dummy_message()})
+    Process.sleep(3000)
     {:noreply, state}
   end
 
@@ -41,6 +42,7 @@ defmodule DummyReader do
     favourites = :rand.uniform(followers)
     retweets_nr = :rand.uniform(favourites) / 2
     %{
+      tweet_id: IdCounter.increment_id(),
       text: text_pool |> Enum.random(),
       hashtags: [],
       followers: followers,
@@ -50,6 +52,10 @@ defmodule DummyReader do
       user_id: :rand.uniform(5),
       engagement_ratio: 0,
       sentimental_score: 0,
+      worker_p: nil,
+      redact_p: false,
+      sentiment_p: false,
+      engagement_p: false,
     }
   end
 end

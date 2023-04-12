@@ -13,7 +13,7 @@ defmodule MessageAnalyst do
 
   ## Server callbacks
 
-  def handle_cast({:message, message}, state) do
+  def handle_cast({:tweet, message}, state) do
     state = %{
       state | tags:
         message.hashtags
