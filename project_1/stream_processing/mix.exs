@@ -25,7 +25,7 @@ defmodule StreamProcessing.MixProject do
         debug: false,
         # [:ets_database :batcher, :aggregator, :user_engagement, :sentiment, :reader, :printer, :start_up]
         debug_options: [:ets_database, :batcher],
-        batch_size: 50000,
+        batch_size: 20,
         batch_expire: 5000
       ]
     ]
