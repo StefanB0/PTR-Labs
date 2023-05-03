@@ -1,8 +1,7 @@
 defmodule Stores.SubscriberStoreTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest Stores.SubscriberStore
 
-  # init genserver
   setup_all do
     Stores.SubscriberStore.start_link([])
     :ok

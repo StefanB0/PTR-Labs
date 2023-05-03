@@ -12,16 +12,7 @@ defmodule Stores.LetterStore do
     {:ok, dets_table} = :dets.open_file(:"data/letter_store", type: :set)
     :dets.to_ets(dets_table, ets_table)
 
-    filter_counter = fn
-      [] ->
-        1
-        :dets.insert_new(dets_table, {"counter", 1})
-
-      c ->
-        c |> hd |> elem(1)
-    end
-
-    counter = :dets.lookup(dets_table, :counter) |> filter_counter.()
+    counter = :dets.info(dets_table, :size)
 
     state = %{
       counter: counter,
