@@ -1,5 +1,4 @@
 defmodule Stores.StoreSupervisor do
-
   use Supervisor
 
   def start_link(_args) do
@@ -15,5 +14,4 @@ defmodule Stores.StoreSupervisor do
 
     Supervisor.init(children, strategy: :one_for_one)
   end
-
 end

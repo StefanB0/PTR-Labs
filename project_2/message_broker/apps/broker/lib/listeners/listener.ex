@@ -8,5 +8,4 @@ defmodule Listeners.Listener do
   def init(_args) do
     {:ok, {}}
   end
-
 end

@@ -1,5 +1,4 @@
 defmodule Stores.DeadLetterStore do
-
   use GenServer
 
   def start_link(_args) do
@@ -9,5 +8,4 @@ defmodule Stores.DeadLetterStore do
   def init(_args) do
     {:ok, {}}
   end
-
 end

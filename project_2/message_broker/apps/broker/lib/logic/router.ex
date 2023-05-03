@@ -1,5 +1,4 @@
 defmodule Logic.Router do
-
   use GenServer
 
   def start_link(_args) do
@@ -9,5 +8,4 @@ defmodule Logic.Router do
   def init(_args) do
     {:ok, {}}
   end
-
 end
