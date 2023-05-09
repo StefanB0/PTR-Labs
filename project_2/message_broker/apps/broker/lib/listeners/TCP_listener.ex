@@ -56,6 +56,7 @@ defmodule Listeners.TCPListener do
 
     Here is a list of commands for publishers:
     PUB/{TOPIC}/{MESSAGE}: publish message to topic. Limited to one topic. Message is bitstring.
+    ----------
     """
   end
 end

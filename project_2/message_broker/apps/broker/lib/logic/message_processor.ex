@@ -49,10 +49,15 @@ defmodule Logic.MessageProcessor do
   end
 
   def publish(topic, message) do
-    Stores.LetterStore.add_entry({message, topic})
+    id = Stores.LetterStore.add_entry({message, topic})
+    Stores.SubscriberStore.get_subscribers_by_topic(topic)
+    |> Enum.each(fn subscriber_id ->
+      Stores.SubscriberStore.add_letter(subscriber_id, id)
+    end)
   end
 
-  def publish_ack(_id) do
+  def publish_ack(id) do
+    Stores.SubscriberStore.pop_letter(id)
     # TODO connect this to durable queue
   end
 
