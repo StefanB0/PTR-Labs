@@ -19,6 +19,10 @@ defmodule Stores.DeadLetterStore do
     {:ok, state}
   end
 
+  def terminate(_, state) do
+    :dets.close(state.dets_table)
+  end
+
   ## Server Logic
 
   ## Server Callbacks

@@ -1,5 +1,6 @@
 defmodule DeadLetterStoreTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
+  doctest Stores.DeadLetterStore
 
   setup_all do
     Stores.DeadLetterStore.start_link([])

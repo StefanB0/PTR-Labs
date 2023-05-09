@@ -6,7 +6,13 @@ defmodule Logic.LogicSupervisor do
   end
 
   def init(_args) do
-    children = []
+    children = [
+      Logic.UserAgent,
+      Logic.MessageProcessor,
+      Logic.Router,
+      Logic.TcpParser,
+      Logic.MqttParser,
+    ]
 
     Supervisor.init(children, strategy: :one_for_one)
   end

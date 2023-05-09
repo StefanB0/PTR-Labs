@@ -19,7 +19,13 @@ defmodule Broker.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Broker.Application, []}
+      mod: {Broker.Application, []},
+      env: [
+        clear_message_delay: 100,
+        message_timeout: 200,
+        tcp_port: 4040,
+        mqtt_port: 1883,
+      ]
     ]
   end
 
@@ -29,6 +35,8 @@ defmodule Broker.MixProject do
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
       # {:sibling_app_in_umbrella, in_umbrella: true}
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
 end

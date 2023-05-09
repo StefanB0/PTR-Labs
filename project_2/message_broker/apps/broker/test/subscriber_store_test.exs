@@ -1,5 +1,5 @@
-defmodule Stores.SubscriberStoreTest do
-  use ExUnit.Case, async: true
+defmodule SubscriberStoreTest do
+  use ExUnit.Case
   doctest Stores.SubscriberStore
 
   setup_all do
@@ -7,35 +7,54 @@ defmodule Stores.SubscriberStoreTest do
     :ok
   end
 
+  setup do
+    Stores.SubscriberStore.remove_all_subscribers()
+  end
+
   test "add subscriber" do
-    assert Stores.SubscriberStore.add_subscriber(1) == :ok
+    assert Stores.SubscriberStore.add_subscriber(mock_contact_info()) |> is_integer()
   end
 
   test "get subscriber" do
-    Stores.SubscriberStore.add_subscriber(1)
-    assert Stores.SubscriberStore.get_subscriber(1) == [{1, [], {}}]
+    id = Stores.SubscriberStore.add_subscriber(mock_contact_info())
+    assert Stores.SubscriberStore.get_subscriber(id) |> Map.get(:id) == id
   end
 
   test "get subscribers" do
-    Stores.SubscriberStore.add_subscriber(1)
-    Stores.SubscriberStore.add_subscriber(2)
-    Stores.SubscriberStore.add_subscriber(34)
-    assert (Stores.SubscriberStore.get_subscribers() |> Enum.map(fn e -> e |> elem(0) end) |> Enum.sort) == [1, 2, 34]
+    Stores.SubscriberStore.add_subscriber(mock_contact_info())
+    Stores.SubscriberStore.add_subscriber(mock_contact_info())
+    Stores.SubscriberStore.add_subscriber(mock_contact_info())
+    assert length(Stores.SubscriberStore.get_subscribers()) == 3
   end
 
   test "add subscriber topics" do
-    Stores.SubscriberStore.add_subscriber(1)
-    assert Stores.SubscriberStore.add_subscriber_topics(1, ["topic"]) == :ok
+    id = Stores.SubscriberStore.add_subscriber(mock_contact_info())
+    assert Stores.SubscriberStore.add_subscriber_topics(id, ["topic"]) == :ok
   end
 
   test "get subscriber topics" do
-    Stores.SubscriberStore.add_subscriber(1)
-    Stores.SubscriberStore.add_subscriber_topics(1, ["topic"])
-    assert Stores.SubscriberStore.get_subscriber_topics(1) == ["topic"]
+    id = Stores.SubscriberStore.add_subscriber(mock_contact_info())
+    Stores.SubscriberStore.add_subscriber_topics(id, ["topic1", "topic2"])
+    assert Stores.SubscriberStore.get_subscriber_topics(id) == ["topic1", "topic2"]
   end
 
   test "remove subscriber" do
-    Stores.SubscriberStore.add_subscriber(1)
-    assert Stores.SubscriberStore.remove_subscriber(1) == :ok
+    id = Stores.SubscriberStore.add_subscriber(mock_contact_info())
+    assert Stores.SubscriberStore.remove_subscriber(id) == :ok
+  end
+
+  test "get subscribers by topic" do
+    id1 = Stores.SubscriberStore.add_subscriber(mock_contact_info())
+    id2 = Stores.SubscriberStore.add_subscriber(mock_contact_info())
+    id3 = Stores.SubscriberStore.add_subscriber(mock_contact_info())
+    Stores.SubscriberStore.add_subscriber_topics(id1, ["topic1", "topic2"])
+    Stores.SubscriberStore.add_subscriber_topics(id2, ["topic1"])
+    Stores.SubscriberStore.add_subscriber_topics(id3, ["topic2"])
+    assert Stores.SubscriberStore.get_subscribers_by_topic("topic1") == [id1, id2]
+    assert Stores.SubscriberStore.get_subscribers_by_topic("topic2") == [id1, id3]
+  end
+
+  def mock_contact_info() do
+    %{ip: {127, 0, 0, 1}, socket: nil, method: "tcp"}
   end
 end
