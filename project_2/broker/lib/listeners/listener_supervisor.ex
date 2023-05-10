@@ -11,25 +11,8 @@ defmodule Listeners.ListenerSupervisor do
     children = [
       {Task.Supervisor, name: Listeners.TaskSupervisor},
       Listeners.TCPListener,
-      # Listeners.Cdc,
-      # Listeners.MQTTListener,
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
   end
 end
-
-# Consumer API
-# Connect
-# Re-connect
-# Subscribe to topic
-# Subscribe to publisher
-# Unsubscribe
-#
-# Publish received (PUBREC)
-# Publish complete (PUBCOMP)
-
-# Publisher API
-# Connect
-# Publish to topic
-# Publish release (PUBREL)

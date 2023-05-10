@@ -60,7 +60,3 @@ defmodule Listeners.TCPListener do
     """
   end
 end
-
-# TODO - add a test for this
-# TODO - when a new subscriber registers they get an id which they need to use to reconnect later
-# TODO - a subscriber must send confirmation that they have received the messages

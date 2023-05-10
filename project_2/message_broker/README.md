@@ -1,4 +1,0 @@
-# MessageBroker
-
-**TODO: Add description**
-

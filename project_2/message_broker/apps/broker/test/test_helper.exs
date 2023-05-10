@@ -1,5 +1,0 @@
-ExUnit.start()
-# File.rm("data/user_store")
-# File.rm("data/letter_store")
-# File.rm("data/dead_letter_store")
-Process.sleep(1000)

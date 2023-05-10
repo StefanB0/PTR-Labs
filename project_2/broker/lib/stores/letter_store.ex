@@ -205,10 +205,3 @@ defmodule Stores.LetterStore do
     Process.send_after(self(), :clear_entries, delay)
   end
 end
-
-# TODO - add a test for this module
-# TODO Letters are stored in both ets and dets tables
-# TODO DETS TABLE IS READ ON STARTUP OR RESTART
-# TODO Each letter has a unique ID, a topic and a list of recipients
-# TODO When the recipient list is empty, the letter is deleted
-# TODO Special property for letter which does not have a recipient yet

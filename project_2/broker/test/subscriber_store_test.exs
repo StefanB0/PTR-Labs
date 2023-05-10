@@ -2,15 +2,6 @@ defmodule SubscriberStoreTest do
   use ExUnit.Case
   doctest Stores.SubscriberStore
 
-  # setup_all do
-    # Stores.SubscriberStore.start_link([])
-    # :ok
-  # end
-
-  # setup do
-  #   Stores.SubscriberStore.remove_all_subscribers()
-  # end
-
   test "add subscriber" do
     assert Stores.SubscriberStore.add_subscriber(mock_contact_info()) |> is_integer()
   end
