@@ -11,13 +11,13 @@ defmodule SenderTest do
   @tag timeout: 3000
   test "add subscriber and letter", %{socket: socket} do
     assert :ok = :gen_tcp.send(socket, "CONNUSR\n")
-    :gen_tcp.recv(socket, 0) |> IO.inspect()
+    :gen_tcp.recv(socket, 0)
     assert :ok = :gen_tcp.send(socket, "SUB/special_topic\n")
-    :gen_tcp.recv(socket, 0) |> IO.inspect()
+    :gen_tcp.recv(socket, 0)
     assert :ok = :gen_tcp.send(socket, "PUB/special_topic/foobar\n")
-    assert {:ok, message} = :gen_tcp.recv(socket, 0) |> IO.inspect()
+    assert {:ok, message} = :gen_tcp.recv(socket, 0)
     assert "PUBACK" == message |> String.trim() |> String.split("/") |> hd()
-    assert {:ok, message} = :gen_tcp.recv(socket, 0) |> IO.inspect()
+    assert {:ok, _message} = :gen_tcp.recv(socket, 0)
     Process.sleep(1000)
   end
 end
